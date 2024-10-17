@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 ThemeData lightTheme() {
   return ThemeData(
     useMaterial3: true,
-    colorScheme: ColorScheme.light(primary: ConstColor.primary.color),
-    scaffoldBackgroundColor: Colors.white,
+    colorScheme: ColorScheme.light(primary: ConstColor.mainLight.color),
+    scaffoldBackgroundColor: ConstColor.secondary.color,
     // ! _____ AppBar _____ ! //
     appBarTheme: AppBarTheme(
       titleTextStyle: TextStyle(
@@ -16,19 +16,22 @@ ThemeData lightTheme() {
         color: Colors.black,
         fontWeight: FontWeight.w500,
       ),
-      centerTitle: true,
       titleSpacing: 0,
       scrolledUnderElevation: 0,
-      backgroundColor: Colors.white,
+      backgroundColor: ConstColor.secondary.color,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(4.w),
           bottomRight: Radius.circular(4.w),
         ),
       ),
+      actionsIconTheme: IconThemeData(
+        size: 20.sp,
+        color: ConstColor.text.color,
+      ),
       iconTheme: IconThemeData(
         size: 20.sp,
-        color: ConstColor.textBtn.color,
+        color: ConstColor.text.color,
       ),
     ),
     // ! _____ TabBar _____ ! //
@@ -37,7 +40,7 @@ ThemeData lightTheme() {
       labelColor: ConstColor.dark.color,
       dividerColor: Colors.transparent,
       indicatorSize: TabBarIndicatorSize.tab,
-      unselectedLabelColor: ConstColor.textBtn.color,
+      unselectedLabelColor: ConstColor.text.color,
       splashFactory: NoSplash.splashFactory,
       labelStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
       unselectedLabelStyle: TextStyle(fontSize: 14.sp),
@@ -50,21 +53,21 @@ ThemeData lightTheme() {
       ),
     ),
     // ! _____ Card Theme _____ ! //
-    cardTheme: const CardTheme(
-      elevation: 2,
+    cardTheme: CardTheme(
+      elevation: .5,
       margin: EdgeInsets.zero,
       clipBehavior: Clip.hardEdge,
-      color: Colors.white,
+      color: ConstColor.white.color,
     ),
     // ! _____ Text Theme _____ ! //
     textTheme: textTheme(),
     fontFamily: "Inter_Light",
     // ! _____ ListTile _____ ! //
     listTileTheme: ListTileThemeData(
-      dense: true,
+      // dense: true,
       textColor: Colors.black54,
-      contentPadding: EdgeInsets.zero,
-      iconColor: ConstColor.main.color,
+      contentPadding: EdgeInsets.symmetric(horizontal: 4.w),
+      iconColor: ConstColor.mainLight.color,
       titleTextStyle: TextStyle(
         inherit: false,
         fontSize: 15.5.sp,
@@ -74,24 +77,24 @@ ThemeData lightTheme() {
         inherit: false,
         fontSize: 14.sp,
       ),
-      leadingAndTrailingTextStyle: const TextStyle(color: Colors.white),
     ),
     // ! _____ Icon _____ ! //
     iconTheme: IconThemeData(
       size: 20.sp,
-      color: ConstColor.textBtn.color,
+      color: ConstColor.text.color,
     ),
     // ! _____ ElevatedButton _____ ! //
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         elevation: 0,
         foregroundColor: ConstColor.secondary.color,
-        backgroundColor: ConstColor.dark.color,
-        // shape: RoundedRectangleBorder(
-        //   borderRadius: BorderRadius.circular(3.25.w),
-        // ),
+        backgroundColor: ConstColor.mainLight.color,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4.w),
+        ),
+        minimumSize: Size(double.infinity, 5.5.h),
         textStyle: TextStyle(
-          fontSize: 16.sp,
+          fontSize: 15.sp,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -99,15 +102,13 @@ ThemeData lightTheme() {
     // ! _____ OutlinedButton _____ ! //
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        backgroundColor: ConstColor.secondary.color,
         foregroundColor: ConstColor.iconDark.color,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(3.w),
-          side: BorderSide(color: ConstColor.secondary.color),
+          borderRadius: BorderRadius.circular(4.w),
         ),
         textStyle: TextStyle(
           inherit: false,
-          fontSize: 14.sp,
+          fontSize: 15.sp,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -115,7 +116,7 @@ ThemeData lightTheme() {
     // ! _____ TextButton _____ ! //
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: ConstColor.textBtn.color,
+        foregroundColor: ConstColor.text.color,
         textStyle: TextStyle(
           fontSize: 14.sp,
           fontWeight: FontWeight.w500,
@@ -198,8 +199,7 @@ ThemeData lightTheme() {
     // ! _____ Input Theme _____ ! //
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      isDense: true,
-      fillColor: ConstColor.secondary.color,
+      // fillColor: ConstColor.white.color,
       hintStyle: TextStyle(
         fontSize: 14.5.sp,
         fontWeight: FontWeight.w400,

@@ -10,7 +10,7 @@ ThemeData darkTheme() {
   return ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.dark(primary: ConstColor.primary.color),
-    scaffoldBackgroundColor: Color(0xff27292d),
+    // scaffoldBackgroundColor: Color(0xff27292d),
     // ! _____ AppBar _____ ! //
     appBarTheme: AppBarTheme(
       titleTextStyle: TextStyle(
@@ -91,7 +91,7 @@ ThemeData darkTheme() {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,
-        backgroundColor: Color(0xff703eff),
+        // backgroundColor: Color(0xff703eff),
         // shape: RoundedRectangleBorder(
         //   borderRadius: BorderRadius.circular(3.25.w),
         // ),
@@ -162,7 +162,7 @@ ThemeData darkTheme() {
     // ! _____ Vertical & Horizontal Divider Theme _____ ! //
     dividerTheme: DividerThemeData(
       space: 2.h,
-      color: ConstColor.textBtn.color,
+      color: ConstColor.text.color,
     ),
     // ! _____ Dialog Theme _____ ! //
     dialogTheme: DialogTheme(
@@ -181,7 +181,7 @@ ThemeData darkTheme() {
           if (state.contains(WidgetState.selected)) {
             return ConstColor.iconDark.color;
           } else {
-            return ConstColor.textBtn.color;
+            return ConstColor.text.color;
           }
         },
       ),
