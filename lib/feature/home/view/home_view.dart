@@ -10,15 +10,27 @@ import '../../../core/common/failure_widget.dart';
 import '../../../core/constant/const_color.dart';
 import '../widget/user_card.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<SocketCubit>()
+      ..isReceiverTyping()
+      ..receiveMsg();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        // toolbarHeight: 7.5.h,
         title: Padding(
           padding: EdgeInsets.only(left: 6.w, right: 4.w),
           child: const Input(
@@ -27,15 +39,6 @@ class HomeView extends StatelessWidget {
           ),
         ),
         actions: [
-          // Padding(
-          //   padding: EdgeInsets.only(right: 6.w),
-          //   child: CircleAvatar(
-          //     radius: 7.w,
-          // backgroundImage: CachedNetworkImageProvider(
-          //     context.read<HomeCubit>().user.image,
-          //     scale: 2),
-          //   ),
-          // ),
           GestureDetector(
             onTap: () {},
             child: Container(
@@ -58,13 +61,7 @@ class HomeView extends StatelessWidget {
               return ListView.separated(
                 itemCount: state.users.length,
                 separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
-                itemBuilder: (_, index) {
-                  return BlocBuilder<SocketCubit, SocketState>(
-                    builder: (_, socketState) {
-                      return UserCard(user: state.users[index]);
-                    },
-                  );
-                },
+                itemBuilder: (_, index) => UserCard(user: state.users[index]),
                 padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
               );
             } else if (state is HomeFailure) {

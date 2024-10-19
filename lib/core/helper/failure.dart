@@ -41,7 +41,7 @@ final class DioFailure extends Failure {
       return const DioFailure._('Unauthorized request');
     } else if (code == 404) {
       return const DioFailure._('Request not found');
-    } else if (code == 500) {
+    } else if (code == 500 || code == 502) {
       return const DioFailure._('Internal server error');
     }
     return const DioFailure._('Unexpected response error');

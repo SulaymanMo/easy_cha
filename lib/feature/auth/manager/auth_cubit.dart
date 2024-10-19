@@ -11,6 +11,7 @@ import '../model/user_model.dart';
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
+  late final UserModel user;
   final ApiService _apiService;
   final Box _box = Hive.box(ConstString.userBox);
   AuthCubit(this._apiService) : super(AuthInitial());
@@ -24,7 +25,11 @@ class AuthCubit extends Cubit<AuthState> {
       );
       ResponseModel response = ResponseModel.fromJson(result);
       await _saveUser(response.data);
-      emit(AuthSuccess(response));
+      if (response.data != null) {
+        emit(AuthSuccess(response.data!));
+      } else {
+        emit(AuthFailure("Error"));
+      }
     } on DioException catch (dioexp) {
       emit(AuthFailure(DioFailure(dioexp).error));
     } catch (e) {
@@ -40,6 +45,7 @@ class AuthCubit extends Cubit<AuthState> {
   bool checkLogin() {
     final data = _box.get(ConstString.userKey, defaultValue: {});
     final Map<String, dynamic> mapData = Map.from(data);
+    user = UserModel.fromJson(mapData);
     return mapData.isEmpty;
   }
 }

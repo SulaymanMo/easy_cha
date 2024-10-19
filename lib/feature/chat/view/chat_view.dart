@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_cha/core/constant/extension.dart';
 import 'package:easy_cha/feature/home/manager/socket_manager/socket_cubit.dart';
-import 'package:easy_cha/feature/home/model/home_user_model.dart';
+import 'package:easy_cha/feature/home/model/home_model/home_user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';

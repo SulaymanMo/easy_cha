@@ -5,7 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:flutter/material.dart';
 import '../../../core/common/input.dart';
 import '../../../core/constant/const_color.dart';
-import '../../home/model/home_user_model.dart';
+import '../../home/model/home_model/home_user_model.dart';
 
 class ChatForm extends StatefulWidget {
   final HomeUserModel user;
