@@ -16,7 +16,7 @@ class ReceiverTyping extends SocketState {
   ReceiverTyping(this.isReceiverTyping, this.receiverId);
 }
 
-class Connected extends SocketState {
+class UserConnected extends SocketState {
   final bool isConnected;
-  Connected(this.isConnected);
+  UserConnected(this.isConnected);
 }

@@ -6,22 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
+import '../../../core/common/failure_widget.dart';
 import '../../../core/constant/const_color.dart';
 import '../widget/user_card.dart';
 
-class HomeView extends StatefulWidget {
+class HomeView extends StatelessWidget {
   const HomeView({super.key});
-
-  @override
-  State<HomeView> createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<HomeView> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<SocketCubit>().isReceiverTyping();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,37 +50,38 @@ class _HomeViewState extends State<HomeView> {
           ),
         ],
       ),
-      body: BlocBuilder<HomeCubit, HomeState>(
-        builder: (_, homeState) {
-          if (homeState is HomeSuccess) {
-            return ListView.separated(
-              itemCount: homeState.users.length,
-              separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
-              itemBuilder: (_, index) {
-                return BlocBuilder<SocketCubit, SocketState>(
-                  builder: (_, socketState) {
-                    return UserCard(user: homeState.users[index]);
-                  },
-                );
-              },
-              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-            );
-          } else if (homeState is HomeFailure) {
-            return const Center(
-              child: Text("Oops... Something went wrong"),
-            );
-          } else {
-            return ListView.separated(
-              itemCount: 10,
-              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-              itemBuilder: (_, index) => Skeleton(
-                height: 9.h,
-                width: double.infinity,
-              ),
-              separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
-            );
-          }
-        },
+      body: RefreshIndicator(
+        onRefresh: () async => await context.read<HomeCubit>().getUsers(),
+        child: BlocBuilder<HomeCubit, HomeState>(
+          builder: (_, state) {
+            if (state is HomeSuccess) {
+              return ListView.separated(
+                itemCount: state.users.length,
+                separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
+                itemBuilder: (_, index) {
+                  return BlocBuilder<SocketCubit, SocketState>(
+                    builder: (_, socketState) {
+                      return UserCard(user: state.users[index]);
+                    },
+                  );
+                },
+                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+              );
+            } else if (state is HomeFailure) {
+              return FailureWidget(state.error);
+            } else {
+              return ListView.separated(
+                itemCount: 10,
+                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                itemBuilder: (_, index) => Skeleton(
+                  height: 9.h,
+                  width: double.infinity,
+                ),
+                separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
+              );
+            }
+          },
+        ),
       ),
     );
   }

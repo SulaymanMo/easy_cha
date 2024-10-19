@@ -22,7 +22,7 @@ Route<dynamic> appRoutes(RouteSettings settings) {
               )..getUsers(),
             ),
             BlocProvider<SocketCubit>(
-              create: (context) => SocketCubit(context.read<HomeCubit>()),
+              create: (context) => SocketCubit(),
             ),
           ],
           child: const HomeView(),

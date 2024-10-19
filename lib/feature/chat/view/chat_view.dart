@@ -42,9 +42,9 @@ class _ChatViewState extends State<ChatView> {
           subtitle: BlocBuilder<SocketCubit, SocketState>(
             builder: (_, state) {
               return Text(
-                state is Connected && state.isConnected ? "Online" : "Offline",
+                state is UserConnected && state.isConnected ? "Online" : "Offline",
                 style: context.regular14?.copyWith(
-                  color: state is Connected && state.isConnected
+                  color: state is UserConnected && state.isConnected
                       ? Colors.green.shade800
                       : Colors.red.shade800,
                 ),

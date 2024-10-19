@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:easy_cha/core/constant/const_string.dart';
-import 'package:easy_cha/feature/home/manager/home_manager/home_cubit.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import '../../../auth/model/user_model.dart';
 import '../../model/typing_status_model.dart';
@@ -13,14 +13,13 @@ part 'socket_state.dart';
 class SocketCubit extends Cubit<SocketState> {
   Timer? _timer;
   static UserModel? _user;
+  final Box _box = Hive.box(ConstString.userBox);
   late final StreamSubscription _subscription;
-  SocketCubit(HomeCubit cubit) : super(SocketInitial()) {
-    _subscription = cubit.stream.listen((HomeState state) {
-      if (state is HomeSuccess) {
-        _user = cubit.user;
-        _initListeners();
-        _subscription.cancel();
-      }
+  SocketCubit() : super(SocketInitial()) {
+    getLocalUser().then((_) {
+      _initListeners();
+      isReceiverTyping();
+      receiveMsg();
     });
   }
 
@@ -56,21 +55,23 @@ class SocketCubit extends Cubit<SocketState> {
     );
   }
 
-  static Socket get _socket => io(
-        ConstString.baseUrl,
-        // <String, dynamic>{
-        //   "transports": ["websocket", "polling"],
-        //   "query": {
-        //     "userid": _user!.id,
-        //     "token": _user!.token,
-        //     "event": "chat",
-        //   },
-        //   "autoConnect": true,
-        //   "reconnection": true,
-        // },
-      );
+  static Socket get _socket {
+    return io(
+      ConstString.baseUrl,
+      <String, dynamic>{
+        "transports": ["websocket", "polling"],
+        "query": {
+          "userid": _user!.id,
+          "token": _user!.token,
+          "event": "chat",
+        },
+        "autoConnect": true,
+        "reconnection": true,
+      },
+    );
+  }
 
-  static void _initListeners() {
+  void _initListeners() async {
     _socket.on(
       SocketEvent.connect.event,
       (data) => debugPrint("Connected"),
@@ -95,33 +96,31 @@ class SocketCubit extends Cubit<SocketState> {
 
   void userConnection() {
     _socket.on(SocketEvent.newConnection.event, (data) {
-      emit(Connected(true));
+      emit(UserConnected(true));
     });
     _socket.on(SocketEvent.closeConnection.event, (data) {
-      emit(Connected(false));
+      emit(UserConnected(false));
     });
   }
 
   void sendMsg(int receiver, String msg) {
     _socket.emit(
-      "new_text_message",
-      json.encode({
-        "sender": _user!.id,
-        "receiver": receiver,
-        "text": msg,
-      }),
+      SocketEvent.msg.event,
+      json.encode({"sender": _user!.id, "receiver": receiver, "text": msg}),
     );
   }
 
   void receiveMsg() {
-    _socket.on("new_text_message", (data) {});
+    _socket.on(SocketEvent.msg.event, (data) {
+      print(" ====================== $data");
+    });
   }
 
-  // void _getLocalUser() {
-  //   final data = _box.get(ConstString.userKey, defaultValue: {});
-  //   final Map<String, dynamic> user = Map.from(data);
-  //   _user = UserModel.fromJson(user);
-  // }
+  Future<void> getLocalUser() async {
+    final data = await _box.get(ConstString.userKey, defaultValue: {});
+    Map<String, dynamic> mapData = Map.from(data);
+    _user = UserModel.fromJson(mapData);
+  }
 
   @override
   Future<void> close() {

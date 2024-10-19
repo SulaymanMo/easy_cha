@@ -1,7 +1,7 @@
 class Routes {
+  static const String login = "/";
   static const String home = "/home";
   static const String chat = "/chat";
-  static const String login = "/login";
 }
 
 class ConstString {
@@ -27,6 +27,7 @@ enum SocketEvent {
   closeConnection("close_connection"),
 
   // ! User Events
+  msg("new_text_message"),
   startTyping("start_typing"),
   stopTyping("stop_typing");
 
