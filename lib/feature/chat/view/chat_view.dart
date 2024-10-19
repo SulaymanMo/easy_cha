@@ -1,16 +1,33 @@
-import 'package:easy_cha/core/constant/const_color.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_cha/core/constant/extension.dart';
+import 'package:easy_cha/feature/home/manager/socket_manager/socket_cubit.dart';
+import 'package:easy_cha/feature/home/model/home_user_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
 import '../widget/chat_input.dart';
 import '../widget/chat_msg.dart';
 import 'package:flutter/material.dart';
 
-class ChatView extends StatelessWidget {
-  const ChatView({super.key});
+class ChatView extends StatefulWidget {
+  final HomeUserModel user;
+  const ChatView(this.user, {super.key});
+
+  @override
+  State<ChatView> createState() => _ChatViewState();
+}
+
+class _ChatViewState extends State<ChatView> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<SocketCubit>().userConnection();
+  }
 
   @override
   Widget build(BuildContext context) {
+    // final bool isOnline =
+    //     widget.user.isOnline != null && widget.user.isOnline == "1";
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
@@ -19,14 +36,20 @@ class ChatView extends StatelessWidget {
         toolbarHeight: 10.h,
         title: ListTile(
           title: Text(
-            "Sulayman Mo Ali",
+            widget.user.name,
             style: context.semi16,
           ),
-          subtitle: Text(
-            "Online",
-            style: context.regular14?.copyWith(
-              color: Colors.green.shade800,
-            ),
+          subtitle: BlocBuilder<SocketCubit, SocketState>(
+            builder: (_, state) {
+              return Text(
+                state is Connected && state.isConnected ? "Online" : "Offline",
+                style: context.regular14?.copyWith(
+                  color: state is Connected && state.isConnected
+                      ? Colors.green.shade800
+                      : Colors.red.shade800,
+                ),
+              );
+            },
           ),
           leading: Row(
             mainAxisSize: MainAxisSize.min,
@@ -36,7 +59,10 @@ class ChatView extends StatelessWidget {
                 child: const Icon(Iconsax.arrow_left_2),
               ),
               SizedBox(width: 2.w),
-              CircleAvatar(radius: 7.w),
+              CircleAvatar(
+                radius: 7.w,
+                backgroundImage: CachedNetworkImageProvider(widget.user.image),
+              ),
             ],
           ),
         ),
@@ -54,7 +80,6 @@ class ChatView extends StatelessWidget {
             ),
           ),
         ],
-        backgroundColor: ConstColor.white.color,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(8.w),
@@ -76,22 +101,10 @@ class ChatView extends StatelessWidget {
             separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
           ),
           Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: EdgeInsets.only(
-                top: 2.h,
-                left: 6.w,
-                right: 6.w,
-                bottom: 2.h,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(6.w),
-              ),
-              child: const ChatForm(receiver: 1000004),
-            ),
+            bottom: 2.h,
+            left: 6.w,
+            right: 6.w,
+            child: ChatForm(user: widget.user),
           ),
         ],
       ),

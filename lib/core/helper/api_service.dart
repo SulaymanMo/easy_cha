@@ -16,7 +16,7 @@ final class ApiService {
         headers: {"Authorization": "Bearer ${ConstString.bearerToken}"},
       ),
     );
-    return response.data;
+    return response.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> get({

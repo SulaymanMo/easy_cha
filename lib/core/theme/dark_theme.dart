@@ -1,5 +1,4 @@
 import 'package:sizer/sizer.dart';
-
 import '../constant/const_color.dart';
 import 'custom_borders.dart';
 import 'package:flutter/material.dart';
@@ -10,18 +9,18 @@ ThemeData darkTheme() {
   return ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.dark(primary: ConstColor.primary.color),
-    // scaffoldBackgroundColor: Color(0xff27292d),
+    scaffoldBackgroundColor: ConstColor.dark.color,
     // ! _____ AppBar _____ ! //
     appBarTheme: AppBarTheme(
       titleTextStyle: TextStyle(
         fontSize: 18.sp,
         fontWeight: FontWeight.w500,
-        color: ConstColor.secondary.color,
+        color: ConstColor.dark.color,
       ),
       titleSpacing: 0,
       centerTitle: true,
       scrolledUnderElevation: 0,
-      backgroundColor: ConstColor.dark.color,
+      backgroundColor: ConstColor.iconDark.color,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(4.w),
@@ -67,9 +66,8 @@ ThemeData darkTheme() {
     fontFamily: "Inter_Light",
     // ! _____ ListTile _____ ! //
     listTileTheme: ListTileThemeData(
-      dense: true,
       textColor: Colors.white,
-      contentPadding: EdgeInsets.zero,
+      contentPadding: EdgeInsets.symmetric(horizontal: 4.w),
       iconColor: ConstColor.icon.color,
       titleTextStyle: TextStyle(
         inherit: false,
@@ -80,7 +78,6 @@ ThemeData darkTheme() {
         inherit: false,
         fontSize: 14.sp,
       ),
-      leadingAndTrailingTextStyle: const TextStyle(color: Colors.white),
     ),
     // ! _____ Icon _____ ! //
     iconTheme: IconThemeData(

@@ -1,13 +1,27 @@
 import 'package:easy_cha/core/common/input.dart';
-import 'package:easy_cha/core/constant/const_color.dart';
+import 'package:easy_cha/core/common/skeleton.dart';
+import 'package:easy_cha/feature/home/manager/home_manager/home_cubit.dart';
+import 'package:easy_cha/feature/home/manager/socket_manager/socket_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
-
+import '../../../core/constant/const_color.dart';
 import '../widget/user_card.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<SocketCubit>().isReceiverTyping();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +37,15 @@ class HomeView extends StatelessWidget {
           ),
         ),
         actions: [
+          // Padding(
+          //   padding: EdgeInsets.only(right: 6.w),
+          //   child: CircleAvatar(
+          //     radius: 7.w,
+          // backgroundImage: CachedNetworkImageProvider(
+          //     context.read<HomeCubit>().user.image,
+          //     scale: 2),
+          //   ),
+          // ),
           GestureDetector(
             onTap: () {},
             child: Container(
@@ -34,16 +57,40 @@ class HomeView extends StatelessWidget {
               ),
               child: const Icon(Iconsax.edit),
             ),
-          )
+          ),
         ],
       ),
-      body: ListView.separated(
-        itemCount: 1,
-        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-        itemBuilder: (_, index) {
-          return const UserCard();
+      body: BlocBuilder<HomeCubit, HomeState>(
+        builder: (_, homeState) {
+          if (homeState is HomeSuccess) {
+            return ListView.separated(
+              itemCount: homeState.users.length,
+              separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
+              itemBuilder: (_, index) {
+                return BlocBuilder<SocketCubit, SocketState>(
+                  builder: (_, socketState) {
+                    return UserCard(user: homeState.users[index]);
+                  },
+                );
+              },
+              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+            );
+          } else if (homeState is HomeFailure) {
+            return const Center(
+              child: Text("Oops... Something went wrong"),
+            );
+          } else {
+            return ListView.separated(
+              itemCount: 10,
+              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+              itemBuilder: (_, index) => Skeleton(
+                height: 9.h,
+                width: double.infinity,
+              ),
+              separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
+            );
+          }
         },
-        separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
       ),
     );
   }

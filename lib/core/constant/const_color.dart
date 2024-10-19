@@ -4,27 +4,20 @@ enum ConstColor {
   mainLight(Color(0xff703EFF)),
   primary(Color(0xffA4CFC3)),
   icon(Color(0xff9CA3AF)),
-  text(Color(0xff6B7280)),
+  text(Color(0xff767c8c)), // 767c8c
 
   blue(Color(0xff0c8ce9)),
-  iconDark(Color(0xff393939)),
+  iconDark(Color(0xff393939)), // 27292d, secondary c3a3f8
   dark(Color(0xff2e2e2e)),
   white(Color(0xffffffff)),
-  secondary(Color(0xffF9F9F9));
+  secondary(Color(0xfff8f9fe));
+
+  // mainLight, mainDark => heavy background
+  // secLight, secDark => light color
+  // textLight, textDark => text color
 
   final Color color;
   const ConstColor(this.color);
-}
-
-class MyColors {
-  static const Color blue = Color(0xff1C64F2);
-  static const Color lightGray = Color(0xffF3F4F6);
-  static const Color softGray = Color(0xff6B7280);
-  static const Color dark = Color(0xff1C2A3A);
-  static const Color dark2 = Color(0xff1F2A37);
-  static const Color gold = Color(0xffFEB052);
-  static const Color primary = Color(0xffA4CFC3);
-  static const Color gray = Color(0xffE5E7EB);
 }
 
 const Gradient greenToTealGradient = LinearGradient(

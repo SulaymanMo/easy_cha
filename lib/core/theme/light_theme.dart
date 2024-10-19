@@ -8,17 +8,17 @@ ThemeData lightTheme() {
   return ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.light(primary: ConstColor.mainLight.color),
-    scaffoldBackgroundColor: ConstColor.secondary.color,
+    scaffoldBackgroundColor: ConstColor.white.color,
     // ! _____ AppBar _____ ! //
     appBarTheme: AppBarTheme(
       titleTextStyle: TextStyle(
         fontSize: 18.sp,
-        color: Colors.black,
         fontWeight: FontWeight.w500,
+        color: ConstColor.dark.color,
       ),
       titleSpacing: 0,
       scrolledUnderElevation: 0,
-      backgroundColor: ConstColor.secondary.color,
+      backgroundColor: ConstColor.white.color,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(4.w),
@@ -64,7 +64,6 @@ ThemeData lightTheme() {
     fontFamily: "Inter_Light",
     // ! _____ ListTile _____ ! //
     listTileTheme: ListTileThemeData(
-      // dense: true,
       textColor: Colors.black54,
       contentPadding: EdgeInsets.symmetric(horizontal: 4.w),
       iconColor: ConstColor.mainLight.color,
@@ -116,9 +115,10 @@ ThemeData lightTheme() {
     // ! _____ TextButton _____ ! //
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: ConstColor.text.color,
+        foregroundColor: ConstColor.iconDark.color,
         textStyle: TextStyle(
           fontSize: 14.sp,
+          letterSpacing: 2.sp,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -158,7 +158,7 @@ ThemeData lightTheme() {
     // ! _____ Vertical & Horizontal Divider Theme _____ ! //
     dividerTheme: DividerThemeData(
       space: 2.h,
-      color: MyColors.gray,
+      color: ConstColor.icon.color,
     ),
     // ! _____ Dialog Theme _____ ! //
     dialogTheme: DialogTheme(
@@ -199,19 +199,22 @@ ThemeData lightTheme() {
     // ! _____ Input Theme _____ ! //
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      // fillColor: ConstColor.white.color,
+      fillColor: ConstColor.secondary.color,
       hintStyle: TextStyle(
         fontSize: 14.5.sp,
+        letterSpacing: 2.sp,
         fontWeight: FontWeight.w400,
-        color: ConstColor.icon.color,
+        color: ConstColor.text.color,
       ),
       labelStyle: TextStyle(
         fontSize: 14.5.sp,
+        letterSpacing: 2.sp,
         fontWeight: FontWeight.w400,
         color: ConstColor.icon.color,
       ),
       floatingLabelStyle: TextStyle(
         fontSize: 16.sp,
+        letterSpacing: 2.sp,
         fontWeight: FontWeight.w600,
         color: ConstColor.primary.color,
       ),

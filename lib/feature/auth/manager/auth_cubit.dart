@@ -6,17 +6,14 @@ import 'package:easy_cha/core/helper/api_service.dart';
 import 'package:easy_cha/feature/auth/model/login_post_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../model/user_model.dart';
+
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit(this._apiService) : super(AuthInitial());
   final ApiService _apiService;
-  final _box = Hive.box<Map<String, dynamic>>(ConstString.userBox);
-
-  bool? checkAuth() {
-    Map<String, dynamic>? data = _box.get(ConstString.userKey);
-    return data?.isEmpty;
-  }
+  final Box _box = Hive.box(ConstString.userBox);
 
   Future<void> login(LoginPostModel model) async {
     try {
@@ -25,8 +22,8 @@ class AuthCubit extends Cubit<AuthState> {
         endPoint: ConstString.login,
         formData: model.toJson(),
       );
-      await _saveUserAuth(result);
       ResponseModel response = ResponseModel.fromJson(result);
+      await _saveUser(response.data);
       emit(AuthSuccess(response));
     } catch (e) {
       emit(AuthFailure("$e"));
@@ -34,7 +31,15 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> _saveUserAuth(Map<String, dynamic> result) async {
-    await _box.put(ConstString.userKey, result);
+  Future<void> _saveUser(UserModel? user) async {
+    if (user == null) return;
+    await _box.put(ConstString.userKey, user.toJson());
+  }
+
+  bool checkLogin() {
+    final data = _box.get(ConstString.userKey, defaultValue: {});
+    final Map<String, dynamic> user = Map.from(data);
+    debugPrint("$user");
+    return user.isEmpty;
   }
 }

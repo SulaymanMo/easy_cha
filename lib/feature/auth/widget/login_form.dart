@@ -116,14 +116,15 @@ class _LoginFormState extends State<LoginForm> {
 
   Future<void> _login(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
-    await context.read<AuthCubit>().login(
-          LoginPostModel(
-            email: _emailController.text,
-            password: _passController.text,
-          ),
-        );
-    } else {
-      _autovalidate = AutovalidateMode.always;
+      await context.read<AuthCubit>().login(
+            LoginPostModel(
+              email: _emailController.text,
+              password: _passController.text,
+            ),
+          );
     }
+    setState(() {
+      _autovalidate = AutovalidateMode.always;
+    });
   }
 }

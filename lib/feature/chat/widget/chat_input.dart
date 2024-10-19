@@ -1,14 +1,15 @@
-import 'package:easy_cha/feature/home/manager/socket_cubit.dart';
+import 'package:easy_cha/feature/home/manager/socket_manager/socket_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter/material.dart';
 import '../../../core/common/input.dart';
 import '../../../core/constant/const_color.dart';
+import '../../home/model/home_user_model.dart';
 
 class ChatForm extends StatefulWidget {
-  final int receiver;
-  const ChatForm({super.key, required this.receiver});
+  final HomeUserModel user;
+  const ChatForm({super.key, required this.user});
 
   @override
   State<ChatForm> createState() => _ChatFormState();
@@ -35,12 +36,11 @@ class _ChatFormState extends State<ChatForm> {
       child: Input(
         onChanged: (val) {
           if (val != null && val != "") {
-            context.read<SocketCubit>().isTyping(widget.receiver);
+            context.read<SocketCubit>().senderTyping(widget.user.id);
           }
         },
         hint: "Type here...",
         controller: _controller,
-        fillColor: ConstColor.secondary.color,
         suffix: IntrinsicHeight(
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -53,15 +53,20 @@ class _ChatFormState extends State<ChatForm> {
                 onPressed: () {},
                 icon: Icon(
                   Iconsax.sticker,
-                  color: ConstColor.text.color,
+                  color: ConstColor.icon.color,
                 ),
               ),
               // SizedBox(width: 0.5.w),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.read<SocketCubit>().sendMsg(
+                        widget.user.id,
+                        _controller.text.trim(),
+                      );
+                },
                 icon: Icon(
                   Iconsax.camera,
-                  color: ConstColor.text.color,
+                  color: ConstColor.icon.color,
                 ),
               ),
             ],
