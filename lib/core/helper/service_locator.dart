@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
-import 'package:easy_cha/core/helper/api_service.dart';
+import 'package:easy_cha/core/service/api_service.dart';
 
 final GetIt getIt = GetIt.instance;
 

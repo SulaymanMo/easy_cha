@@ -6,9 +6,9 @@ class HomeUserModel {
   final String? isOnline;
   final String? text;
   final int? receiver;
-  final int? unreadCount;
+  int? unreadCount;
 
-  const HomeUserModel({
+  HomeUserModel({
     required this.id,
     required this.email,
     required this.name,

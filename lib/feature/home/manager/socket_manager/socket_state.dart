@@ -10,16 +10,11 @@ class SocketInitial extends SocketState {}
 
 // class SocketFailure extends SocketState {}
 
-class ReceiverTyping extends SocketState {
-  final String receiverId;
-  final bool isReceiverTyping;
-  ReceiverTyping(this.isReceiverTyping, this.receiverId);
-}
-
-class ReceivedMsg extends SocketState {
-  final ReceiveMsgModel model;
-  ReceivedMsg(this.model);
-}
+// class ReceiverTyping extends SocketState {
+//   final String receiverId;
+//   final bool isReceiverTyping;
+//   ReceiverTyping(this.isReceiverTyping, this.receiverId);
+// }
 
 class UserConnected extends SocketState {
   final bool isConnected;

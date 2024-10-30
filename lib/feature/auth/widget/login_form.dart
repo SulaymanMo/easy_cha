@@ -1,7 +1,6 @@
 import 'package:easy_cha/core/constant/extension.dart';
 import 'package:easy_cha/core/helper/show_msg.dart';
 import 'package:easy_cha/feature/auth/manager/auth_cubit.dart';
-import 'package:easy_cha/feature/auth/model/login_post_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
@@ -116,12 +115,9 @@ class _LoginFormState extends State<LoginForm> {
 
   Future<void> _login(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
-      await context.read<AuthCubit>().login(
-            LoginPostModel(
-              email: _emailController.text,
-              password: _passController.text,
-            ),
-          );
+      await context
+          .read<AuthCubit>()
+          .login(_emailController.text, _passController.text);
     }
     setState(() {
       _autovalidate = AutovalidateMode.always;

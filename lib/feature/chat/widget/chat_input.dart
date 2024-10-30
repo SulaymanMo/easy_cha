@@ -1,10 +1,11 @@
-import 'package:easy_cha/feature/home/manager/socket_manager/socket_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter/material.dart';
 import '../../../core/common/input.dart';
 import '../../../core/constant/const_color.dart';
+import '../../home/manager/msg_manager/msg_cubit.dart';
+import '../../home/manager/typing_msg_manager/typing_cubit.dart';
 import '../../home/model/home_model/home_user_model.dart';
 
 class ChatForm extends StatefulWidget {
@@ -36,7 +37,7 @@ class _ChatFormState extends State<ChatForm> {
       child: Input(
         onChanged: (val) {
           if (val != null && val != "") {
-            context.read<SocketCubit>().senderTyping(widget.user.id);
+            context.read<TypingMsgCubit>().isSenderTyping(widget.user.id);
           }
         },
         hint: "Type here...",
@@ -59,10 +60,11 @@ class _ChatFormState extends State<ChatForm> {
               // SizedBox(width: 0.5.w),
               IconButton(
                 onPressed: () {
-                  context.read<SocketCubit>().sendMsg(
+                  context.read<MsgCubit>().sendMsg(
                         widget.user.id,
                         _controller.text.trim(),
                       );
+                  _controller.clear();
                 },
                 icon: Icon(
                   Iconsax.camera,

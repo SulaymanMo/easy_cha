@@ -21,7 +21,10 @@ class _ChatViewState extends State<ChatView> {
   @override
   void initState() {
     super.initState();
-    context.read<SocketCubit>().userConnection();
+    context.read<SocketCubit>()
+      ..userConnection()
+      ..seenMsg(widget.user.id);
+    // context.read<MsgCubit>().sendMsg(widget.user.id);
   }
 
   @override
@@ -42,7 +45,9 @@ class _ChatViewState extends State<ChatView> {
           subtitle: BlocBuilder<SocketCubit, SocketState>(
             builder: (_, state) {
               return Text(
-                state is UserConnected && state.isConnected ? "Online" : "Offline",
+                state is UserConnected && state.isConnected
+                    ? "Online"
+                    : "Offline",
                 style: context.regular14?.copyWith(
                   color: state is UserConnected && state.isConnected
                       ? Colors.green.shade800
@@ -55,7 +60,13 @@ class _ChatViewState extends State<ChatView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               GestureDetector(
-                onTap: () => context.nav.pop(),
+                onTap: () {
+                  //   context.nav.pushNamedAndRemoveUntil(
+                  //   Routes.home,
+                  //   (_) => false,
+                  // );
+                  context.nav.pop();
+                },
                 child: const Icon(Iconsax.arrow_left_2),
               ),
               SizedBox(width: 2.w),

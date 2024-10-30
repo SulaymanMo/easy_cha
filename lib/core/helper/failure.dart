@@ -18,7 +18,7 @@ final class DioFailure extends Failure {
       case DioExceptionType.receiveTimeout:
         return const DioFailure._('Receive timeout');
       case DioExceptionType.badResponse:
-        return DioFailure._fromResponse(
+        return DioFailure.fromResponse(
           dioexp.response?.statusCode,
           dioexp.response?.data,
         );
@@ -36,7 +36,8 @@ final class DioFailure extends Failure {
     }
   }
 
-  factory DioFailure._fromResponse(int? code, dynamic data) {
+  factory DioFailure.fromResponse(int? code, dynamic data) {
+    // print(code);
     if (code == 400 || code == 401 || code == 403) {
       return const DioFailure._('Unauthorized request');
     } else if (code == 404) {

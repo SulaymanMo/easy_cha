@@ -1,7 +1,6 @@
 import 'package:easy_cha/core/common/input.dart';
 import 'package:easy_cha/core/common/skeleton.dart';
 import 'package:easy_cha/feature/home/manager/home_manager/home_cubit.dart';
-import 'package:easy_cha/feature/home/manager/socket_manager/socket_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
@@ -21,9 +20,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    context.read<SocketCubit>()
-      ..isReceiverTyping()
-      ..receiveMsg();
+    context.read<HomeCubit>().getUsers();
   }
 
   @override

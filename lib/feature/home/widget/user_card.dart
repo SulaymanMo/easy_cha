@@ -1,27 +1,51 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_cha/feature/chat/view/chat_view.dart';
+import 'package:easy_cha/feature/home/manager/msg_manager/msg_cubit.dart';
+import 'package:easy_cha/feature/home/manager/typing_msg_manager/typing_cubit.dart';
 import 'package:easy_cha/feature/home/model/home_model/home_user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_cha/core/constant/extension.dart';
-import '../manager/socket_manager/socket_cubit.dart';
 
-class UserCard extends StatelessWidget {
+class UserCard extends StatefulWidget {
   final HomeUserModel user;
   const UserCard({super.key, required this.user});
+
+  @override
+  State<UserCard> createState() => _UserCardState();
+}
+
+class _UserCardState extends State<UserCard> {
+  int _counter = 0;
+  String _msg = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _counter = widget.user.unreadCount!;
+    context.read<MsgCubit>().receiveMsg();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         onTap: () {
-          context.nav.push(
+          Navigator.push(
+            context,
             MaterialPageRoute(
               builder: (_) {
-                return BlocProvider.value(
-                  value: context.read<SocketCubit>(),
-                  child: ChatView(user),
+                return MultiBlocProvider(
+                  providers: [
+                    BlocProvider<TypingMsgCubit>.value(
+                      value: context.read<TypingMsgCubit>(),
+                    ),
+                    BlocProvider<MsgCubit>.value(
+                      value: context.read<MsgCubit>(),
+                    ),
+                  ],
+                  child: ChatView(widget.user),
                 );
               },
             ),
@@ -29,14 +53,14 @@ class UserCard extends StatelessWidget {
         },
         leading: CircleAvatar(
           radius: 7.w,
-          backgroundImage: CachedNetworkImageProvider(user.image),
+          backgroundImage: CachedNetworkImageProvider(widget.user.image),
         ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
               child: Text(
-                user.name,
+                widget.user.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: context.semi16,
@@ -50,45 +74,96 @@ class UserCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
-              child: BlocBuilder<SocketCubit, SocketState>(
-                builder: (_, state) {
-                  return Text(
-                    state is ReceiverTyping &&
-                            state.isReceiverTyping &&
-                            state.receiverId == "${user.id}"
-                        ? "Typing..."
-                        : state is ReceivedMsg
-                            ? state.model.msg
-                            : user.text ?? "Let's chat with ${user.name}",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.regular14,
+              child: BlocBuilder<MsgCubit, MsgState>(
+                builder: (_, msgState) {
+                  return BlocBuilder<TypingMsgCubit, TypingMsgState>(
+                    builder: (_, state) {
+                      if (state is ReceiverTypingMsg &&
+                          state.isSenderTyping &&
+                          state.senderId == "${widget.user.id}") {
+                        return Text("Typing...", style: context.regular14);
+                      } else if (msgState is ReceivedMsg) {
+                        if (msgState.model.sender == widget.user.id) {
+                          _msg = msgState.model.msg;
+                          return Text(
+                            _msg,
+                            maxLines: 1,
+                            style: context.regular14,
+                            overflow: TextOverflow.ellipsis,
+                          );
+                        } else if (_msg.isNotEmpty) {
+                          return Text(
+                            _msg,
+                            maxLines: 1,
+                            style: context.regular14,
+                            overflow: TextOverflow.ellipsis,
+                          );
+                        } else if (widget.user.text != null) {
+                          return Text(
+                            "${widget.user.text}",
+                            maxLines: 1,
+                            style: context.regular14,
+                            overflow: TextOverflow.ellipsis,
+                          );
+                        }
+                        return Text(
+                          "Let's chat with ${widget.user.name}",
+                          maxLines: 1,
+                          style: context.regular14,
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      } else if (widget.user.text != null) {
+                        return Text(
+                          "${widget.user.text}",
+                          maxLines: 1,
+                          style: context.regular14,
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      } else {
+                        return Text(
+                          "Let's chat with ${widget.user.name}",
+                          maxLines: 1,
+                          style: context.regular14,
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      }
+                    },
                   );
                 },
               ),
             ),
             SizedBox(width: 2.w),
-            BlocBuilder<SocketCubit, SocketState>(
+            BlocBuilder<MsgCubit, MsgState>(
               builder: (_, state) {
-                if (state is ReceivedMsg && state.model.sender == user.id) {
-                  return CircleAvatar(
-                    radius: 3.w,
-                    child: Text(
-                      state.model.msg,
-                      style: context.regular14?.copyWith(color: Colors.white),
-                    ),
-                  );
-                } else if (user.unreadCount != null && user.unreadCount != 0) {
-                  return CircleAvatar(
-                    radius: 3.w,
-                    child: Text(
-                      "${user.unreadCount}",
-                      style: context.regular14?.copyWith(color: Colors.white),
-                    ),
-                  );
-                } else {
+                if (state is ReceivedMsg) {
+                  if (state.model.sender == widget.user.id) {
+                    return CircleAvatar(
+                      radius: 3.w,
+                      child: Text(
+                        "${++_counter}",
+                        style: context.regular14?.copyWith(color: Colors.white),
+                      ),
+                    );
+                  } else if (_counter > 0) {
+                    return CircleAvatar(
+                      radius: 3.w,
+                      child: Text(
+                        "$_counter",
+                        style: context.regular14?.copyWith(color: Colors.white),
+                      ),
+                    );
+                  }
                   return const SizedBox.shrink();
+                } else if (_counter > 0) {
+                  return CircleAvatar(
+                    radius: 3.w,
+                    child: Text(
+                      "$_counter",
+                      style: context.regular14?.copyWith(color: Colors.white),
+                    ),
+                  );
                 }
+                return const SizedBox.shrink();
               },
             ),
           ],

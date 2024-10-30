@@ -27,6 +27,7 @@ enum SocketEvent {
 
   // ! User Events
   newConnection("new_connection"), // ? check users connection
+  seenMsg("seen_message"), // ? seen msg
   msg("new_text_message"), // ? send or receive msg
   startTyping("start_typing"),
   stopTyping("stop_typing");
