@@ -1,13 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:easy_cha/core/constant/extension.dart';
-import 'package:easy_cha/feature/home/manager/socket_manager/socket_cubit.dart';
+import 'package:easy_cha/core/common/failure_widget.dart';
+import 'package:easy_cha/feature/chat/manager/chat_cubit.dart';
 import 'package:easy_cha/feature/home/model/home_model/home_user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
+import '../../home/manager/socket_manager/socket_cubit.dart';
+import '../widget/chat_appbar_title.dart';
 import '../widget/chat_input.dart';
-import '../widget/chat_msg.dart';
+import '../widget/chat_list.dart';
 import 'package:flutter/material.dart';
+import '../widget/empty_chat.dart';
 
 class ChatView extends StatefulWidget {
   final HomeUserModel user;
@@ -24,7 +26,7 @@ class _ChatViewState extends State<ChatView> {
     context.read<SocketCubit>()
       ..userConnection()
       ..seenMsg(widget.user.id);
-    // context.read<MsgCubit>().sendMsg(widget.user.id);
+    context.read<ChatCubit>().getMsgs(widget.user.id);
   }
 
   @override
@@ -36,47 +38,8 @@ class _ChatViewState extends State<ChatView> {
       appBar: AppBar(
         titleSpacing: 0,
         leadingWidth: 0,
-        toolbarHeight: 10.h,
-        title: ListTile(
-          title: Text(
-            widget.user.name,
-            style: context.semi16,
-          ),
-          subtitle: BlocBuilder<SocketCubit, SocketState>(
-            builder: (_, state) {
-              return Text(
-                state is UserConnected && state.isConnected
-                    ? "Online"
-                    : "Offline",
-                style: context.regular14?.copyWith(
-                  color: state is UserConnected && state.isConnected
-                      ? Colors.green.shade800
-                      : Colors.red.shade800,
-                ),
-              );
-            },
-          ),
-          leading: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  //   context.nav.pushNamedAndRemoveUntil(
-                  //   Routes.home,
-                  //   (_) => false,
-                  // );
-                  context.nav.pop();
-                },
-                child: const Icon(Iconsax.arrow_left_2),
-              ),
-              SizedBox(width: 2.w),
-              CircleAvatar(
-                radius: 7.w,
-                backgroundImage: CachedNetworkImageProvider(widget.user.image),
-              ),
-            ],
-          ),
-        ),
+        // toolbarHeight: 10.h,
+        title: ChatAppBarTitle(user: widget.user),
         leading: const SizedBox.shrink(),
         actions: [
           IconButton(
@@ -92,24 +55,31 @@ class _ChatViewState extends State<ChatView> {
           ),
         ],
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(8.w),
-          bottomRight: Radius.circular(8.w),
-        )),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(8.w),
+            bottomRight: Radius.circular(8.w),
+          ),
+        ),
       ),
       body: Stack(
         children: [
-          ListView.separated(
-            itemCount: 2,
-            reverse: true,
-            padding: EdgeInsets.only(
-              left: 6.w,
-              right: 6.w,
-              top: 2.h,
-              bottom: 12.h,
-            ),
-            itemBuilder: (_, index) => const ChatMsg(),
-            separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
+          BlocConsumer<ChatCubit, ChatState>(
+            listener: (_, ChatState state) {},
+            builder: (_, state) {
+              if (state is ChatSuccess) {
+                return state.model.isEmpty
+                    ? EmptyChat(name: widget.user.name)
+                    : ChatList(
+                        user: widget.user,
+                        msgs: context.read<ChatCubit>().msgs,
+                      );
+              } else if (state is ChatFailure) {
+                return FailureWidget(state.error);
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
           ),
           Positioned(
             bottom: 2.h,

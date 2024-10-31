@@ -1,4 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_cha/core/helper/service_locator.dart';
+import 'package:easy_cha/core/service/api_service.dart';
+import 'package:easy_cha/feature/auth/manager/auth_cubit.dart';
+import 'package:easy_cha/feature/chat/manager/chat_cubit.dart';
 import 'package:easy_cha/feature/chat/view/chat_view.dart';
 import 'package:easy_cha/feature/home/manager/msg_manager/msg_cubit.dart';
 import 'package:easy_cha/feature/home/manager/typing_msg_manager/typing_cubit.dart';
@@ -44,6 +48,12 @@ class _UserCardState extends State<UserCard> {
                     BlocProvider<MsgCubit>.value(
                       value: context.read<MsgCubit>(),
                     ),
+                    BlocProvider(
+                      create: (_) => ChatCubit(
+                        getIt.get<ApiService>(),
+                        context.read<AuthCubit>(),
+                      ),
+                    ),
                   ],
                   child: ChatView(widget.user),
                 );
@@ -82,7 +92,7 @@ class _UserCardState extends State<UserCard> {
                           state.isSenderTyping &&
                           state.senderId == "${widget.user.id}") {
                         return Text("Typing...", style: context.regular14);
-                      } else if (msgState is ReceivedMsg) {
+                      } else if (msgState is NewMsg) {
                         if (msgState.model.sender == widget.user.id) {
                           _msg = msgState.model.msg;
                           return Text(
@@ -135,7 +145,7 @@ class _UserCardState extends State<UserCard> {
             SizedBox(width: 2.w),
             BlocBuilder<MsgCubit, MsgState>(
               builder: (_, state) {
-                if (state is ReceivedMsg) {
+                if (state is NewMsg) {
                   if (state.model.sender == widget.user.id) {
                     return CircleAvatar(
                       radius: 3.w,

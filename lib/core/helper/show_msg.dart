@@ -16,20 +16,20 @@ void showMsg(
         borderRadius: BorderRadius.circular(7.w),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.w),
+        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.w),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // SizedBox(height: 10.h, child: alertWidget),
-            SizedBox(height: 1.h),
+            SizedBox(height: 10.h, child: alertWidget),
+            SizedBox(height: 1.5.h),
             Text(title, style: context.bold18?.copyWith(letterSpacing: 1.5.sp)),
-            SizedBox(height: 1.h),
+            SizedBox(height: 1.5.h),
             Text(
               msg,
-              style: context.medium14,
+              style: context.medium16,
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 1.5.h),
             Row(
               children: [
                 Expanded(
@@ -40,7 +40,7 @@ void showMsg(
                     child: const Text("Undo"),
                   ),
                 ),
-                SizedBox(width: 4.w),
+                SizedBox(width: 2.w),
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () async {

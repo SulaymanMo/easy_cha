@@ -36,7 +36,7 @@ class _ChatFormState extends State<ChatForm> {
     return Form(
       child: Input(
         onChanged: (val) {
-          if (val != null && val != "") {
+          if (val != null && val != "" && val.isNotEmpty) {
             context.read<TypingMsgCubit>().isSenderTyping(widget.user.id);
           }
         },
@@ -60,14 +60,16 @@ class _ChatFormState extends State<ChatForm> {
               // SizedBox(width: 0.5.w),
               IconButton(
                 onPressed: () {
+                  // ! Send
                   context.read<MsgCubit>().sendMsg(
                         widget.user.id,
                         _controller.text.trim(),
                       );
+                  // ! Clear
                   _controller.clear();
                 },
                 icon: Icon(
-                  Iconsax.camera,
+                  Iconsax.send_1,
                   color: ConstColor.icon.color,
                 ),
               ),

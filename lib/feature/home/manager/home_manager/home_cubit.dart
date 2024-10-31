@@ -18,7 +18,7 @@ class HomeCubit extends Cubit<HomeState> {
     _user = cubit.user!;
   }
 
-  Future<void> getUsers() async {
+  Future<void> getUsers() async { 
     try {
       emit(HomeLoading());
       final result = await _apiService.get(

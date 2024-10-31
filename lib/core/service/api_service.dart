@@ -5,7 +5,7 @@ final class ApiService {
   final Dio _dio;
   const ApiService(this._dio);
 
-  Future<Map<String, dynamic>> post({
+  Future<Map<String, dynamic>> postFormData({
     required String endPoint,
     required Map<String, dynamic> formData,
   }) async {
@@ -20,9 +20,9 @@ final class ApiService {
   }
 
   Future<Map<String, dynamic>> get({
-    required String endPoint,
     required String userid,
     required String token,
+    required String endPoint,
   }) async {
     Response<Map<String, dynamic>> response = await _dio.get(
       "${ConstString.baseUrl}/$endPoint",

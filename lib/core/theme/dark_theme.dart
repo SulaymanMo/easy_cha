@@ -20,7 +20,7 @@ ThemeData darkTheme() {
       titleSpacing: 0,
       centerTitle: true,
       scrolledUnderElevation: 0,
-      backgroundColor: ConstColor.iconDark.color,
+      backgroundColor: ConstColor.dark.color,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(4.w),

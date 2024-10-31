@@ -22,7 +22,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthLoading());
       String? token = await FirebaseMessaging.instance.getToken();
       if (token != null) {
-        Map<String, dynamic> result = await _apiService.post(
+        Map<String, dynamic> result = await _apiService.postFormData(
           endPoint: ConstString.login,
           formData: LoginPostModel(
             email: email,
@@ -60,4 +60,6 @@ class AuthCubit extends Cubit<AuthState> {
     } else if (true) {}
     return mapData.isEmpty;
   }
+
+  Future<void> logout() async => await _box.clear();
 }

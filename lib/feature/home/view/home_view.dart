@@ -1,5 +1,8 @@
 import 'package:easy_cha/core/common/input.dart';
 import 'package:easy_cha/core/common/skeleton.dart';
+import 'package:easy_cha/core/constant/extension.dart';
+import 'package:easy_cha/core/helper/show_msg.dart';
+import 'package:easy_cha/feature/auth/manager/auth_cubit.dart';
 import 'package:easy_cha/feature/home/manager/home_manager/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +10,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
 import '../../../core/common/failure_widget.dart';
 import '../../../core/constant/const_color.dart';
+import '../../../core/constant/const_string.dart';
 import '../widget/user_card.dart';
 
 class HomeView extends StatefulWidget {
@@ -37,15 +41,30 @@ class _HomeViewState extends State<HomeView> {
         ),
         actions: [
           GestureDetector(
-            onTap: () {},
+            onTap: () async {
+              showMsg(
+                context,
+                title: "Are you sure?",
+                msg: "You will back to login page!",
+                alertWidget: Icon(Iconsax.danger, size: 38.sp),
+                onPressed: () async {
+                  await context.read<AuthCubit>().logout();
+                  if (context.mounted) {
+                    context.nav.pushReplacementNamed(Routes.login);
+                  }
+                },
+              );
+            },
             child: Container(
               margin: EdgeInsets.only(right: 6.w),
               padding: EdgeInsets.all(3.5.w),
               decoration: BoxDecoration(
-                color: ConstColor.white.color,
+                color: context.theme.brightness == Brightness.dark
+                    ? ConstColor.iconDark.color
+                    : ConstColor.secondary.color,
                 borderRadius: BorderRadius.circular(3.5.w),
               ),
-              child: const Icon(Iconsax.edit),
+              child: const Icon(Iconsax.setting_2),
             ),
           ),
         ],
@@ -65,7 +84,7 @@ class _HomeViewState extends State<HomeView> {
               return FailureWidget(state.error);
             } else {
               return ListView.separated(
-                itemCount: 10,
+                itemCount: 5,
                 padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                 itemBuilder: (_, index) => Skeleton(
                   height: 9.h,

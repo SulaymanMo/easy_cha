@@ -7,28 +7,34 @@ import 'package:easy_cha/feature/home/manager/socket_manager/socket_cubit.dart';
 part 'msg_state.dart';
 
 class MsgCubit extends Cubit<MsgState> {
-  final SocketCubit _cubit;
-  MsgCubit(this._cubit) : super(MsgInitial());
+  final SocketCubit _socketCubit;
+  MsgCubit(this._socketCubit) : super(MsgInitial());
 
   // ! Receive msg from users
   void receiveMsg() {
-    _cubit.socket.on(SocketEvent.msg.event, (data) {
-      emit(ReceivedMsg(HomeMsgModel.fromJson(data)));
+    _socketCubit.socket.on(SocketEvent.msg.event, (data) {
+      emit(NewMsg(HomeMsgModel.fromJson(data)));
+      // ! here add to chat msgs
     });
     emit(MsgInitial());
   }
 
   // ! Send msg to user (used in chat)
   void sendMsg(int receiver, String msg) {
-    _cubit.socket.emit(
+    _socketCubit.socket.emit(
       SocketEvent.msg.event,
       jsonEncode(
         HomeMsgModel(
-          sender: _cubit.user.id,
+          sender: _socketCubit.user.id,
           receiver: receiver,
           msg: msg,
         ).toJson(),
       ),
     );
+    emit(NewMsg(HomeMsgModel(
+      sender: _socketCubit.user.id,
+      receiver: receiver,
+      msg: msg,
+    )));
   }
 }
