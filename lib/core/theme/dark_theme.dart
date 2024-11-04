@@ -152,6 +152,7 @@ ThemeData darkTheme() {
       showDragHandle: true,
       constraints: const BoxConstraints(
         minWidth: double.infinity,
+        // minHeight: 30.h,
       ),
       dragHandleColor: ConstColor.primary.color,
       backgroundColor: ConstColor.dark.color,

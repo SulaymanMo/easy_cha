@@ -2,7 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_cha/core/helper/service_locator.dart';
 import 'package:easy_cha/core/service/api_service.dart';
 import 'package:easy_cha/feature/auth/manager/auth_cubit.dart';
-import 'package:easy_cha/feature/chat/manager/chat_cubit.dart';
+import 'package:easy_cha/feature/chat/manager/chat_manager/chat_cubit.dart';
+import 'package:easy_cha/feature/chat/manager/file_manager/pick_file_cubit.dart';
 import 'package:easy_cha/feature/chat/view/chat_view.dart';
 import 'package:easy_cha/feature/home/manager/msg_manager/msg_cubit.dart';
 import 'package:easy_cha/feature/home/manager/typing_msg_manager/typing_cubit.dart';
@@ -11,56 +12,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_cha/core/constant/extension.dart';
+import '../manager/socket_manager/socket_cubit.dart';
+import 'last_msg_text.dart';
+import 'msg_counter.dart';
 
 class UserCard extends StatefulWidget {
+  final int index;
   final HomeUserModel user;
-  const UserCard({super.key, required this.user});
+  const UserCard({super.key, required this.user, required this.index});
 
   @override
   State<UserCard> createState() => _UserCardState();
 }
 
 class _UserCardState extends State<UserCard> {
-  int _counter = 0;
-  String _msg = "";
-
-  @override
-  void initState() {
-    super.initState();
-    _counter = widget.user.unreadCount!;
-    context.read<MsgCubit>().receiveMsg();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) {
-                return MultiBlocProvider(
-                  providers: [
-                    BlocProvider<TypingMsgCubit>.value(
-                      value: context.read<TypingMsgCubit>(),
-                    ),
-                    BlocProvider<MsgCubit>.value(
-                      value: context.read<MsgCubit>(),
-                    ),
-                    BlocProvider(
-                      create: (_) => ChatCubit(
-                        getIt.get<ApiService>(),
-                        context.read<AuthCubit>(),
-                      ),
-                    ),
-                  ],
-                  child: ChatView(widget.user),
-                );
-              },
-            ),
-          );
-        },
+        onTap: () => _navToUserChat(context),
         leading: CircleAvatar(
           radius: 7.w,
           backgroundImage: CachedNetworkImageProvider(widget.user.image),
@@ -84,100 +54,42 @@ class _UserCardState extends State<UserCard> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
-              child: BlocBuilder<MsgCubit, MsgState>(
-                builder: (_, msgState) {
-                  return BlocBuilder<TypingMsgCubit, TypingMsgState>(
-                    builder: (_, state) {
-                      if (state is ReceiverTypingMsg &&
-                          state.isSenderTyping &&
-                          state.senderId == "${widget.user.id}") {
-                        return Text("Typing...", style: context.regular14);
-                      } else if (msgState is NewMsg) {
-                        if (msgState.model.sender == widget.user.id) {
-                          _msg = msgState.model.msg;
-                          return Text(
-                            _msg,
-                            maxLines: 1,
-                            style: context.regular14,
-                            overflow: TextOverflow.ellipsis,
-                          );
-                        } else if (_msg.isNotEmpty) {
-                          return Text(
-                            _msg,
-                            maxLines: 1,
-                            style: context.regular14,
-                            overflow: TextOverflow.ellipsis,
-                          );
-                        } else if (widget.user.text != null) {
-                          return Text(
-                            "${widget.user.text}",
-                            maxLines: 1,
-                            style: context.regular14,
-                            overflow: TextOverflow.ellipsis,
-                          );
-                        }
-                        return Text(
-                          "Let's chat with ${widget.user.name}",
-                          maxLines: 1,
-                          style: context.regular14,
-                          overflow: TextOverflow.ellipsis,
-                        );
-                      } else if (widget.user.text != null) {
-                        return Text(
-                          "${widget.user.text}",
-                          maxLines: 1,
-                          style: context.regular14,
-                          overflow: TextOverflow.ellipsis,
-                        );
-                      } else {
-                        return Text(
-                          "Let's chat with ${widget.user.name}",
-                          maxLines: 1,
-                          style: context.regular14,
-                          overflow: TextOverflow.ellipsis,
-                        );
-                      }
-                    },
-                  );
-                },
-              ),
+              child: LastMsgText(user: widget.user),
             ),
             SizedBox(width: 2.w),
-            BlocBuilder<MsgCubit, MsgState>(
-              builder: (_, state) {
-                if (state is NewMsg) {
-                  if (state.model.sender == widget.user.id) {
-                    return CircleAvatar(
-                      radius: 3.w,
-                      child: Text(
-                        "${++_counter}",
-                        style: context.regular14?.copyWith(color: Colors.white),
-                      ),
-                    );
-                  } else if (_counter > 0) {
-                    return CircleAvatar(
-                      radius: 3.w,
-                      child: Text(
-                        "$_counter",
-                        style: context.regular14?.copyWith(color: Colors.white),
-                      ),
-                    );
-                  }
-                  return const SizedBox.shrink();
-                } else if (_counter > 0) {
-                  return CircleAvatar(
-                    radius: 3.w,
-                    child: Text(
-                      "$_counter",
-                      style: context.regular14?.copyWith(color: Colors.white),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
+            MsgCounter(user: widget.user, index: widget.index),
           ],
         ),
+      ),
+    );
+  }
+
+  void _navToUserChat(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider<TypingMsgCubit>.value(
+                value: context.read<TypingMsgCubit>(),
+              ),
+              BlocProvider<MsgCubit>.value(
+                value: context.read<MsgCubit>(),
+              ),
+              BlocProvider(
+                create: (_) => ChatCubit(
+                  getIt.get<ApiService>(),
+                  context.read<AuthCubit>(),
+                ),
+              ),
+              BlocProvider(
+                create: (_) => PickFileCubit(context.read<SocketCubit>()),
+              ),
+            ],
+            child: ChatView(user: widget.user, index: widget.index),
+          );
+        },
       ),
     );
   }

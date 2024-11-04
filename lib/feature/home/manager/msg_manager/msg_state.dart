@@ -4,7 +4,8 @@ sealed class MsgState {}
 
 final class MsgInitial extends MsgState {}
 
-class NewMsg extends MsgState {
+final class NewMsgState extends MsgState {
   final HomeMsgModel model;
-  NewMsg(this.model);
+  NewMsgState(this.model);
 }
+

@@ -1,20 +1,15 @@
+import 'package:easy_cha/feature/chat/manager/chat_manager/chat_cubit.dart';
+import 'package:easy_cha/feature/chat/model/chat_msg_model.dart';
 import 'package:easy_cha/feature/home/manager/msg_manager/msg_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import '../../home/model/home_model/home_user_model.dart';
-import '../model/chat_msg_model.dart';
 import 'chat_msg.dart';
 
 class ChatList extends StatefulWidget {
-  const ChatList({
-    super.key,
-    required this.user,
-    required this.msgs,
-  });
-
   final HomeUserModel user;
-  final List<ChatMsgModel> msgs;
+  const ChatList({super.key, required this.user});
 
   @override
   State<ChatList> createState() => _ChatListState();
@@ -36,6 +31,7 @@ class _ChatListState extends State<ChatList> {
     super.initState();
     _controller = ScrollController();
     _scrollDown();
+    // context.read<MsgCubit>().receiveMsg();
   }
 
   @override
@@ -46,11 +42,24 @@ class _ChatListState extends State<ChatList> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MsgCubit, MsgState>(
-      builder: (context, state) {
+    final ChatCubit read = context.read<ChatCubit>();
+    return BlocConsumer<MsgCubit, MsgState>(
+      listener: (BuildContext context, MsgState state) {
+        if (state is NewMsgState) {
+          read.msgs.add(
+            ChatMsgModel(
+              id: state.model.msgid,
+              text: state.model.msg,
+              sender: state.model.sender,
+              receiver: state.model.receiver,
+            ),
+          );
+        }
+      },
+      builder: (_, state) {
         return ListView.separated(
           controller: _controller,
-          itemCount: widget.msgs.length,
+          itemCount: read.msgs.length,
           padding: EdgeInsets.only(
             top: 2.h,
             left: 6.w,
@@ -58,8 +67,8 @@ class _ChatListState extends State<ChatList> {
             bottom: 12.h,
           ),
           itemBuilder: (_, index) => ChatMsg(
-            msg: widget.msgs[index],
-            isMe: widget.user.id == widget.msgs[index].receiver,
+            msg: read.msgs[index],
+            isMe: widget.user.id == read.msgs[index].receiver,
           ),
           separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
         );
@@ -67,5 +76,3 @@ class _ChatListState extends State<ChatList> {
     );
   }
 }
-
-// ! access on list of msgs

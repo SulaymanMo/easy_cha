@@ -32,10 +32,6 @@ class ChatAppBarTitle extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {
-              //   context.nav.pushNamedAndRemoveUntil(
-              //   Routes.home,
-              //   (_) => false,
-              // );
               context.nav.pop();
             },
             borderRadius: BorderRadius.circular(50),

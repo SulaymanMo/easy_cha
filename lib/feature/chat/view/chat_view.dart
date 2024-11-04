@@ -1,5 +1,6 @@
 import 'package:easy_cha/core/common/failure_widget.dart';
-import 'package:easy_cha/feature/chat/manager/chat_cubit.dart';
+import 'package:easy_cha/feature/chat/manager/chat_manager/chat_cubit.dart';
+import 'package:easy_cha/feature/home/manager/msg_manager/msg_cubit.dart';
 import 'package:easy_cha/feature/home/model/home_model/home_user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
@@ -12,8 +13,9 @@ import 'package:flutter/material.dart';
 import '../widget/empty_chat.dart';
 
 class ChatView extends StatefulWidget {
+  final int index;
   final HomeUserModel user;
-  const ChatView(this.user, {super.key});
+  const ChatView({super.key, required this.user, required this.index});
 
   @override
   State<ChatView> createState() => _ChatViewState();
@@ -23,10 +25,13 @@ class _ChatViewState extends State<ChatView> {
   @override
   void initState() {
     super.initState();
-    context.read<SocketCubit>()
-      ..userConnection()
-      ..seenMsg(widget.user.id);
+    final msgState = context.read<MsgCubit>().state;
+    context.read<SocketCubit>().userConnection();
     context.read<ChatCubit>().getMsgs(widget.user.id);
+    if (msgState is NewMsgState && msgState.model.sender == widget.user.id) {
+      context.read<MsgCubit>().seenMsg(receiver: widget.user.id, index: 2);
+      print("${widget.user.id} || ${msgState.model.sender}");
+    }
   }
 
   @override
@@ -63,16 +68,12 @@ class _ChatViewState extends State<ChatView> {
       ),
       body: Stack(
         children: [
-          BlocConsumer<ChatCubit, ChatState>(
-            listener: (_, ChatState state) {},
+          BlocBuilder<ChatCubit, ChatState>(
             builder: (_, state) {
               if (state is ChatSuccess) {
                 return state.model.isEmpty
                     ? EmptyChat(name: widget.user.name)
-                    : ChatList(
-                        user: widget.user,
-                        msgs: context.read<ChatCubit>().msgs,
-                      );
+                    : ChatList(user: widget.user);
               } else if (state is ChatFailure) {
                 return FailureWidget(state.error);
               }
@@ -85,7 +86,7 @@ class _ChatViewState extends State<ChatView> {
             bottom: 2.h,
             left: 6.w,
             right: 6.w,
-            child: ChatForm(user: widget.user),
+            child: ChatInput(user: widget.user),
           ),
         ],
       ),

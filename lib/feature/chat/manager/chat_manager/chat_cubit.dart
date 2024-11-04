@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:easy_cha/core/constant/const_string.dart';
-import '../../../core/helper/failure.dart';
-import '../../auth/manager/auth_cubit.dart';
-import '../../auth/model/user_model.dart';
+import '../../../../core/helper/failure.dart';
+import '../../../auth/manager/auth_cubit.dart';
+import '../../../auth/model/user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../core/service/api_service.dart';
-import '../model/chat_model.dart';
-import '../model/chat_msg_model.dart';
+import '../../../../core/service/api_service.dart';
+import '../../model/chat_model.dart';
+import '../../model/chat_msg_model.dart';
 
 part 'chat_state.dart';
 

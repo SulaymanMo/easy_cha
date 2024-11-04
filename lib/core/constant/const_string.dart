@@ -30,6 +30,7 @@ enum SocketEvent {
   newConnection("new_connection"), // ? check users connection
   seenMsg("seen_message"), // ? seen msg
   msg("new_text_message"), // ? send or receive msg
+  file("new_file_message"), // ? send or receive file
   startTyping("start_typing"),
   stopTyping("stop_typing");
 

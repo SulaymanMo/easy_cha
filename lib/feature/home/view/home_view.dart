@@ -11,6 +11,7 @@ import 'package:sizer/sizer.dart';
 import '../../../core/common/failure_widget.dart';
 import '../../../core/constant/const_color.dart';
 import '../../../core/constant/const_string.dart';
+import '../manager/msg_manager/msg_cubit.dart';
 import '../widget/user_card.dart';
 
 class HomeView extends StatefulWidget {
@@ -25,6 +26,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     context.read<HomeCubit>().getUsers();
+    context.read<MsgCubit>().receiveMsg();
   }
 
   @override
@@ -77,7 +79,10 @@ class _HomeViewState extends State<HomeView> {
               return ListView.separated(
                 itemCount: state.users.length,
                 separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
-                itemBuilder: (_, index) => UserCard(user: state.users[index]),
+                itemBuilder: (_, index) => UserCard(
+                  user: state.users[index],
+                  index: index,
+                ),
                 padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
               );
             } else if (state is HomeFailure) {
