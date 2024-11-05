@@ -1,17 +1,17 @@
-class HomeMsgModel {
+class SendMsgModel {
   final int? msgid;
   final String msg;
   final int sender, receiver;
 
-  const HomeMsgModel({
+  const SendMsgModel({
     this.msgid,
     required this.msg,
     required this.sender,
     required this.receiver,
   });
 
-  factory HomeMsgModel.fromJson(Map<String, dynamic> json) {
-    return HomeMsgModel(
+  factory SendMsgModel.fromJson(Map<String, dynamic> json) {
+    return SendMsgModel(
       msgid: json["messageID"],
       msg: json["text"],
       sender: int.parse(json["sender"]),

@@ -17,18 +17,6 @@ class MsgCounter extends StatefulWidget {
 
 class _MsgCounterState extends State<MsgCounter> {
   @override
-  void deactivate() {
-    print("object");
-    super.deactivate();
-  }
-
-  @override
-  void dispose() {
-    print("object");
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     int counter =
         context.read<HomeCubit>().counters[widget.index][widget.user.id]!;

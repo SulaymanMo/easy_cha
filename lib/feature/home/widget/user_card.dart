@@ -3,7 +3,7 @@ import 'package:easy_cha/core/helper/service_locator.dart';
 import 'package:easy_cha/core/service/api_service.dart';
 import 'package:easy_cha/feature/auth/manager/auth_cubit.dart';
 import 'package:easy_cha/feature/chat/manager/chat_manager/chat_cubit.dart';
-import 'package:easy_cha/feature/chat/manager/file_manager/pick_file_cubit.dart';
+import 'package:easy_cha/feature/chat/manager/file_manager/file_cubit.dart';
 import 'package:easy_cha/feature/chat/view/chat_view.dart';
 import 'package:easy_cha/feature/home/manager/msg_manager/msg_cubit.dart';
 import 'package:easy_cha/feature/home/manager/typing_msg_manager/typing_cubit.dart';
@@ -12,7 +12,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_cha/core/constant/extension.dart';
-import '../manager/socket_manager/socket_cubit.dart';
 import 'last_msg_text.dart';
 import 'msg_counter.dart';
 
@@ -77,14 +76,14 @@ class _UserCardState extends State<UserCard> {
               BlocProvider<MsgCubit>.value(
                 value: context.read<MsgCubit>(),
               ),
-              BlocProvider(
+              BlocProvider<ChatCubit>(
                 create: (_) => ChatCubit(
                   getIt.get<ApiService>(),
                   context.read<AuthCubit>(),
                 ),
               ),
-              BlocProvider(
-                create: (_) => PickFileCubit(context.read<SocketCubit>()),
+              BlocProvider<FileCubit>.value(
+                value: context.read<FileCubit>(),
               ),
             ],
             child: ChatView(user: widget.user, index: widget.index),

@@ -30,7 +30,7 @@ class _ChatViewState extends State<ChatView> {
     context.read<ChatCubit>().getMsgs(widget.user.id);
     if (msgState is NewMsgState && msgState.model.sender == widget.user.id) {
       context.read<MsgCubit>().seenMsg(receiver: widget.user.id, index: 2);
-      print("${widget.user.id} || ${msgState.model.sender}");
+      debugPrint("${widget.user.id} || ${msgState.model.sender}");
     }
   }
 
@@ -39,7 +39,6 @@ class _ChatViewState extends State<ChatView> {
     // final bool isOnline =
     //     widget.user.isOnline != null && widget.user.isOnline == "1";
     return Scaffold(
-      extendBody: true,
       appBar: AppBar(
         titleSpacing: 0,
         leadingWidth: 0,
@@ -83,9 +82,9 @@ class _ChatViewState extends State<ChatView> {
             },
           ),
           Positioned(
-            bottom: 2.h,
-            left: 6.w,
-            right: 6.w,
+            left: 0,
+            right: 0,
+            bottom: 0,
             child: ChatInput(user: widget.user),
           ),
         ],

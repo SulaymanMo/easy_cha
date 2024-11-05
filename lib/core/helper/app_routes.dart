@@ -2,6 +2,7 @@ import 'package:easy_cha/core/service/api_service.dart';
 import 'package:easy_cha/core/helper/service_locator.dart';
 import 'package:easy_cha/feature/auth/manager/auth_cubit.dart';
 import 'package:easy_cha/feature/auth/view/login_view.dart';
+import 'package:easy_cha/feature/chat/manager/file_manager/file_cubit.dart';
 import 'package:easy_cha/feature/home/manager/msg_manager/msg_cubit.dart';
 import 'package:easy_cha/feature/home/manager/typing_msg_manager/typing_cubit.dart';
 import 'package:easy_cha/feature/home/manager/home_manager/home_cubit.dart';
@@ -33,6 +34,11 @@ Route<dynamic> appRoutes(RouteSettings settings) {
                 create: (context) => MsgCubit(
                   context.read<SocketCubit>(),
                   context.read<HomeCubit>(),
+                ),
+              ),
+              BlocProvider<FileCubit>(
+                create: (context) => FileCubit(
+                  context.read<SocketCubit>(),
                 ),
               ),
             ],

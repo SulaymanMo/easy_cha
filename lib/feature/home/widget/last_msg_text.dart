@@ -1,7 +1,6 @@
 import 'package:easy_cha/core/constant/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../manager/msg_manager/msg_cubit.dart';
 import '../manager/typing_msg_manager/typing_cubit.dart';
 import '../model/home_model/home_user_model.dart';
@@ -29,7 +28,7 @@ class _LastMsgTextState extends State<LastMsgText> {
               return Text("Typing...", style: context.regular14);
             } else if (msgState is NewMsgState) {
               if (msgState.model.sender == widget.user.id) {
-                _msg = msgState.model.msg;
+                _msg = msgState.model.text!;
                 return Text(
                   _msg,
                   maxLines: 1,

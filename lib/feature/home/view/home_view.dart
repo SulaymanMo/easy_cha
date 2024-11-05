@@ -3,6 +3,7 @@ import 'package:easy_cha/core/common/skeleton.dart';
 import 'package:easy_cha/core/constant/extension.dart';
 import 'package:easy_cha/core/helper/show_msg.dart';
 import 'package:easy_cha/feature/auth/manager/auth_cubit.dart';
+import 'package:easy_cha/feature/chat/manager/file_manager/file_cubit.dart';
 import 'package:easy_cha/feature/home/manager/home_manager/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,6 +28,7 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
     context.read<HomeCubit>().getUsers();
     context.read<MsgCubit>().receiveMsg();
+    context.read<FileCubit>().receiveFile();
   }
 
   @override

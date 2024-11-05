@@ -27,7 +27,7 @@ class ChatCubit extends Cubit<ChatState> {
         token: _user.token,
         endPoint: "${ConstString.chat}$id",
       );
-      // print(result);
+      // print(result); SENDER AND RECEIVER HERE ARE INT
       ChatModel chatModel = ChatModel.fromJson(result);
       if (chatModel.status == true) {
         msgs = chatModel.data?.messages ?? [];
