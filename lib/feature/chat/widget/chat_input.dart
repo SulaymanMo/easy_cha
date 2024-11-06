@@ -1,6 +1,5 @@
 import 'package:easy_cha/core/constant/extension.dart';
 import 'package:easy_cha/core/helper/show_msg.dart';
-import 'package:easy_cha/feature/chat/manager/file_manager/file_cubit.dart';
 import 'package:easy_cha/feature/chat/model/send_file_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,9 +49,9 @@ class _ChatInputState extends State<ChatInput> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          BlocConsumer<FileCubit, FileState>(
+          BlocConsumer<MsgCubit, MsgState>(
             listener: (_, state) {
-              if (state is FileFailure) {
+              if (state is MsgFailure) {
                 showMsg(
                   context,
                   title: "Oops!",
@@ -75,7 +74,7 @@ class _ChatInputState extends State<ChatInput> {
                           padding: EdgeInsets.symmetric(horizontal: 2.w),
                           child: TextButton(
                             onPressed: () {
-                              context.read<FileCubit>().removeAll(state.files);
+                              context.read<MsgCubit>().removeAll(state.files);
                             },
                             child: const Text("Remove All"),
                           ),
@@ -103,7 +102,7 @@ class _ChatInputState extends State<ChatInput> {
                                 right: 1.w,
                                 child: GestureDetector(
                                   onTap: () =>
-                                      context.read<FileCubit>().removeFile(
+                                      context.read<MsgCubit>().removeFile(
                                             files: state.files,
                                             index: state.files.indexOf(
                                               state.files[index],
@@ -182,7 +181,7 @@ class _ChatInputState extends State<ChatInput> {
                                         iconData: _icons[index],
                                         onTap: () async {
                                           await context
-                                              .read<FileCubit>()
+                                              .read<MsgCubit>()
                                               .pickFiles(_types[index]);
                                           if (context.mounted) {
                                             context.nav.pop();
@@ -203,12 +202,12 @@ class _ChatInputState extends State<ChatInput> {
                       ),
                     ),
                     // ! _____ SEND BUTTON _____
-                    BlocBuilder<FileCubit, FileState>(
+                    BlocBuilder<MsgCubit, MsgState>(
                       builder: (_, state) {
                         return IconButton(
                           onPressed: () {
                             if (state is FilesPickedState) {
-                              context.read<FileCubit>().sendFiles(
+                              context.read<MsgCubit>().sendFiles(
                                     SendFileModel(
                                       type: "images",
                                       sender: 0,

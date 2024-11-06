@@ -1,5 +1,5 @@
-import 'package:easy_cha/core/constant/const_string.dart';
 import 'package:flutter/foundation.dart';
+import 'package:easy_cha/core/constant/const_string.dart';
 
 class ChatMsgModel {
   int? id;
@@ -7,8 +7,8 @@ class ChatMsgModel {
   dynamic image;
   dynamic file;
   String? type;
-  int? sender;
-  int? receiver;
+  dynamic sender;
+  dynamic receiver;
   String? seenAt;
   String? createdAt;
 
@@ -25,19 +25,39 @@ class ChatMsgModel {
   });
 
   factory ChatMsgModel.fromJson(Map<String, dynamic> json) {
-    String? type = json["type"];
     return ChatMsgModel(
       id: json['id'] as int?,
-      text: type != "text"
-          ? "${ConstString.path}$type/${json['text'] as String?}"
-          : json["text"] as String?,
-      image: "${ConstString.path}images/${json['image'] as dynamic}",
-      file: json['file'] as dynamic,
-      type: type,
-      sender: json['sender'],
-      receiver: json['receiver'],
+      text: json["text"],
+      type: json["type"] as String?,
+      sender: json['sender'] as int?,
+      receiver: json['receiver'] as int?,
       seenAt: json['seen_at'] as String?,
       createdAt: json['created_at'] as String?,
+    );
+  }
+
+  factory ChatMsgModel.newMsg(Map<String, dynamic> json) {
+    return ChatMsgModel(
+      id: json['messageID'] as int?,
+      text: json["text"],
+      type: ConstString.textType,
+      sender: json['sender'] as String?,
+      receiver: json['receiver'] as String?,
+      seenAt: "${DateTime.now()}",
+    );
+  }
+
+  factory ChatMsgModel.file(
+    Map<String, dynamic> json, {
+    required String? fileName,
+  }) {
+    return ChatMsgModel(
+      type: json["type"] as String?,
+      id: json["messageID"] as int?,
+      text: "${ConstString.path}${json["type"]}/$fileName",
+      seenAt: "${DateTime.now()}",
+      sender: json["sender"],
+      receiver: json["receiver"],
     );
   }
 

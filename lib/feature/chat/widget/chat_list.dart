@@ -1,13 +1,8 @@
-import 'package:easy_cha/core/helper/show_msg.dart';
 import 'package:easy_cha/feature/chat/manager/chat_manager/chat_cubit.dart';
-import 'package:easy_cha/feature/chat/manager/file_manager/file_cubit.dart';
-import 'package:easy_cha/feature/chat/model/chat_msg_model.dart';
 import 'package:easy_cha/feature/home/manager/msg_manager/msg_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
-import '../../../core/constant/const_string.dart';
 import '../../home/model/home_model/home_user_model.dart';
 import 'chat_msg.dart';
 
@@ -51,55 +46,30 @@ class _ChatListState extends State<ChatList> {
   @override
   Widget build(BuildContext context) {
     final ChatCubit read = context.read<ChatCubit>();
-    return BlocConsumer<FileCubit, FileState>(
+    return BlocConsumer<MsgCubit, MsgState>(
       listener: (_, state) {
-        if (state is NewFileState) {
-          read.msgs.add(state.fileMsg);
-        } else if (state is FileFailure) {
-          showMsg(
-            context,
-            title: "Oops!",
-            msg: state.error,
-            alertWidget: Icon(Iconsax.danger, size: 32.sp),
-            onPressed: () async {},
-          );
+        if (state is NewMsgState) {
+          read.msgs.add(state.model);
+          _scrollDown();
         }
       },
-      builder: (context, state) {
-        return BlocConsumer<MsgCubit, MsgState>(
-          listener: (_, msgState) {
-            if (msgState is NewMsgState) {
-              read.msgs.add(
-                ChatMsgModel(
-                  // id: msgState.model.id,
-                  // file: msgState.model.file,
-                  text: msgState.model.text,
-                  type: ConstString.textType,
-                  seenAt: "${DateTime.now()}",
-                  sender: msgState.model.sender,
-                  receiver: msgState.model.receiver,
-                )..toString(),
-              );
-              _scrollDown();
-            }
-          },
-          builder: (_, state) {
-            return ListView.separated(
-              controller: _controller,
-              itemCount: read.msgs.length,
-              padding: EdgeInsets.only(
-                top: 2.h,
-                left: 6.w,
-                right: 6.w,
-                bottom: 12.h,
-              ),
-              itemBuilder: (_, index) => ChatMsg(
-                msg: read.msgs[index],
-                isMe: widget.user.id == read.msgs[index].receiver,
-              ),
-              separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
+      builder: (_, state) {
+        return ListView.separated(
+          controller: _controller,
+          itemCount: context.read<ChatCubit>().msgs.length,
+          padding: EdgeInsets.only(
+            top: 2.h,
+            left: 6.w,
+            right: 6.w,
+            bottom: 12.h,
+          ),
+          itemBuilder: (_, index) {
+            return ChatMsg(
+              msg: context.read<ChatCubit>().msgs[index],
+              isMe: widget.user.id == read.msgs[index].receiver,
             );
           },
+          separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
         );
       },
     );

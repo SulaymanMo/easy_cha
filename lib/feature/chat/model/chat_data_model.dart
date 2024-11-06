@@ -1,5 +1,5 @@
-import 'current_user_model.dart';
 import 'chat_msg_model.dart';
+import 'current_user_model.dart';
 
 class ChatDataModel {
   List<ChatMsgModel>? messages;
@@ -10,7 +10,8 @@ class ChatDataModel {
   factory ChatDataModel.fromJson(Map<String, dynamic> json) => ChatDataModel(
         currentUser: json['currentUser'] == null
             ? null
-            : CurrentUserModel.fromJson(json['currentUser'] as Map<String, dynamic>),
+            : CurrentUserModel.fromJson(
+                json['currentUser'] as Map<String, dynamic>),
         messages: (json['messages'] as List<dynamic>?)
             ?.map((e) => ChatMsgModel.fromJson(e as Map<String, dynamic>))
             .toList(),

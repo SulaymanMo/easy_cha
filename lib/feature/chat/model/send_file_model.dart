@@ -1,6 +1,6 @@
 final class SendFileModel {
   final String type;
-  final List<String> files;
+  final List files;
   final int sender, receiver;
 
   const SendFileModel({
@@ -13,7 +13,7 @@ final class SendFileModel {
   factory SendFileModel.fromJson(Map<String, dynamic> json) {
     return SendFileModel(
       type: json["type"] as String,
-      files: json["files"] as List<String>,
+      files: json["files"],
       sender: int.parse(json["sender"] as String),
       receiver: int.parse(json["receiver"] as String),
     );

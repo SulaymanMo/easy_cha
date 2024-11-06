@@ -3,7 +3,6 @@ import 'package:easy_cha/core/helper/service_locator.dart';
 import 'package:easy_cha/core/service/api_service.dart';
 import 'package:easy_cha/feature/auth/manager/auth_cubit.dart';
 import 'package:easy_cha/feature/chat/manager/chat_manager/chat_cubit.dart';
-import 'package:easy_cha/feature/chat/manager/file_manager/file_cubit.dart';
 import 'package:easy_cha/feature/chat/view/chat_view.dart';
 import 'package:easy_cha/feature/home/manager/msg_manager/msg_cubit.dart';
 import 'package:easy_cha/feature/home/manager/typing_msg_manager/typing_cubit.dart';
@@ -82,9 +81,9 @@ class _UserCardState extends State<UserCard> {
                   context.read<AuthCubit>(),
                 ),
               ),
-              BlocProvider<FileCubit>.value(
-                value: context.read<FileCubit>(),
-              ),
+              // BlocProvider<FileCubit>.value(
+              //   value: context.read<FileCubit>(),
+              // ),
             ],
             child: ChatView(user: widget.user, index: widget.index),
           );

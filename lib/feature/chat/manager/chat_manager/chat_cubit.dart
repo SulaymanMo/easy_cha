@@ -5,7 +5,6 @@ import '../../../auth/manager/auth_cubit.dart';
 import '../../../auth/model/user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/service/api_service.dart';
-import '../../model/chat_model.dart';
 import '../../model/chat_msg_model.dart';
 
 part 'chat_state.dart';
@@ -28,10 +27,24 @@ class ChatCubit extends Cubit<ChatState> {
         endPoint: "${ConstString.chat}$id",
       );
       // print(result); SENDER AND RECEIVER HERE ARE INT
-      ChatModel chatModel = ChatModel.fromJson(result);
-      if (chatModel.status == true) {
-        msgs = chatModel.data?.messages ?? [];
-        emit(ChatSuccess(msgs));
+      // ChatModel chatModel = ChatModel.fromJson(result);
+      final List messages = result["data"]?["messages"];
+      if (result["status"] == true) {
+        for (var msg in messages) {
+          final model = ChatMsgModel.fromJson(msg);
+          if (['files', 'images'].contains(msg['type'])) {
+            final splitted = model.text?.split(",");
+            for (String file in splitted!) {
+              // Create a new instance for each file to avoid reference duplication
+              final newModel = ChatMsgModel.fromJson(msg);
+              newModel.text = "${ConstString.path}${model.type}/$file";
+              msgs.add(newModel);
+            }
+          } else {
+            msgs.add(model);
+          }
+        }
+        emit(ChatSuccess());
       } else {
         emit(ChatFailure("Oops... Status returned with false!"));
       }

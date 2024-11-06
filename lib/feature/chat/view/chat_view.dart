@@ -70,7 +70,7 @@ class _ChatViewState extends State<ChatView> {
           BlocBuilder<ChatCubit, ChatState>(
             builder: (_, state) {
               if (state is ChatSuccess) {
-                return state.model.isEmpty
+                return context.read<ChatCubit>().msgs.isEmpty
                     ? EmptyChat(name: widget.user.name)
                     : ChatList(user: widget.user);
               } else if (state is ChatFailure) {
