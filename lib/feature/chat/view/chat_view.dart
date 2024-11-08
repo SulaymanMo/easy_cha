@@ -24,28 +24,31 @@ class ChatView extends StatefulWidget {
 class _ChatViewState extends State<ChatView> {
   @override
   void initState() {
+    _init();
     super.initState();
+  }
+
+  void _init() {
     final msgState = context.read<MsgCubit>().state;
     context.read<SocketCubit>().userConnection();
     context.read<ChatCubit>().getMsgs(widget.user.id);
-    if (msgState is NewMsgState &&
-        int.parse(msgState.model.sender) == widget.user.id) {
-      context
-          .read<MsgCubit>()
-          .seenMsg(receiver: widget.user.id, index: widget.index);
-      // debugPrint("${widget.user.id} || ${msgState.model.sender}");
+    if (context.read<ChatCubit>().state is ChatSuccess) {
+      if (msgState is NewMsgState &&
+          int.parse(msgState.model.sender) == widget.user.id) {
+        context
+            .read<MsgCubit>()
+            .seenMsg(receiver: widget.user.id, index: widget.index);
+        // debugPrint("${widget.user.id} || ${msgState.model.sender}");
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // final bool isOnline =
-    //     widget.user.isOnline != null && widget.user.isOnline == "1";
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
         leadingWidth: 0,
-        // toolbarHeight: 10.h,
         title: ChatAppBarTitle(user: widget.user),
         leading: const SizedBox.shrink(),
         actions: [

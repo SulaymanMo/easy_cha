@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:easy_cha/feature/chat/model/chat_msg_model.dart';
+import 'package:easy_cha/feature/home/manager/home_manager/home_cubit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mime_type/mime_type.dart';
 import '../../../chat/model/send_file_model.dart';
+import '../../model/home_model/home_user_model.dart';
 import '../../model/socket_model/send_msg_model.dart';
 import '../../../../core/constant/const_string.dart';
 import 'package:easy_cha/feature/home/manager/socket_manager/socket_cubit.dart';
@@ -15,7 +17,8 @@ part 'msg_state.dart';
 class MsgCubit extends Cubit<MsgState> {
   int limit = 5;
   final SocketCubit _socket;
-  MsgCubit(this._socket) : super(MsgInitial());
+  final HomeCubit _homeCubit;
+  MsgCubit(this._socket, this._homeCubit) : super(MsgInitial());
 
   Future<void> pickFiles(FileType fileType) async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -113,7 +116,7 @@ class MsgCubit extends Cubit<MsgState> {
                 id: response["messageID"],
                 file: file,
                 text: "${ConstString.path}${response["type"]}/$file",
-                seenAt: "${DateTime.now()}",
+                seenAt: "${DateTime.now().millisecondsSinceEpoch}",
                 sender: response["sender"],
                 receiver: response["receiver"],
               ),
@@ -165,7 +168,7 @@ class MsgCubit extends Cubit<MsgState> {
           sender: _socket.user.id,
           receiver: receiver,
           type: ConstString.textType,
-          seenAt: "${DateTime.now()}",
+          seenAt: "${DateTime.now().millisecondsSinceEpoch}",
         ),
       ),
     );
@@ -179,5 +182,13 @@ class MsgCubit extends Cubit<MsgState> {
     );
     emit(SeenMsgState());
     // print("${_socket.user.id} seen $receiver at index $index==============");
+  }
+
+  void reOrderUsers(int id) {
+    HomeUserModel userModel = _homeCubit.users.firstWhere(
+      (user) => user.id == id,
+    );
+    _homeCubit.users.removeWhere((user) => user.id == id);
+    _homeCubit.users.insert(0, userModel);
   }
 }

@@ -78,14 +78,28 @@ class _HomeViewState extends State<HomeView> {
         child: BlocBuilder<HomeCubit, HomeState>(
           builder: (_, state) {
             if (state is HomeSuccess) {
-              return ListView.separated(
-                itemCount: state.users.length,
-                separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
-                itemBuilder: (_, index) => UserCard(
-                  user: state.users[index],
-                  index: index,
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+              return BlocConsumer<MsgCubit, MsgState>(
+                listener: (_, state) {
+                  if (state is NewMsgState) {
+                    context
+                        .read<MsgCubit>()
+                        .reOrderUsers(int.parse(state.model.sender));
+                  }
+                },
+                builder: (_, msgState) {
+                  return ListView.separated(
+                    itemCount: state.users.length,
+                    separatorBuilder: (_, index) => SizedBox(height: 1.5.h),
+                    itemBuilder: (_, index) => UserCard(
+                      user: state.users[index],
+                      index: index,
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 2.h,
+                      horizontal: 6.w,
+                    ),
+                  );
+                },
               );
             } else if (state is HomeFailure) {
               return FailureWidget(state.error);

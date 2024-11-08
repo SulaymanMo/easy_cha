@@ -1,7 +1,7 @@
 import 'package:easy_cha/core/common/custom_image.dart';
 import 'package:easy_cha/core/helper/service_locator.dart';
-import 'package:easy_cha/core/service/api_service.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_cha/core/constant/extension.dart';
@@ -46,9 +46,9 @@ class ChatMsg extends StatelessWidget {
                       padding: EdgeInsets.all(1.h),
                       child: InkWell(
                         onTap: () async {
-                          final FileDownloader downloader =
-                              FileDownloader(getIt.get<ApiService>());
-                          await downloader.downloadFile(msg.text!, "file_name");
+                          await getIt
+                              .get<FileDownloader>()
+                              .downloadFile(msg.text!, "file_name");
                         },
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -77,19 +77,41 @@ class ChatMsg extends StatelessWidget {
                     ),
         ),
         SizedBox(height: 0.5.h),
-        Row(
-          mainAxisAlignment:
-              isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-          children: [
-            Text(
-              msg.seenAt ?? "",
-              style: context.regular14,
-            ),
-            SizedBox(width: 2.w),
-            const Icon(Icons.trending_up),
-          ],
-        ),
+        isMe
+            ? Row(
+                mainAxisAlignment:
+                    isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                children: [
+                  Text(
+                    _formatTimestampTo12Hour(msg.seenAt),
+                    style: context.regular14,
+                  ),
+                  SizedBox(width: 1.5.w),
+                  Icon(Icons.check_outlined, size: 16.sp),
+                ],
+              )
+            : Row(
+                mainAxisAlignment:
+                    isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                children: [
+                  Icon(Icons.check_outlined, size: 16.sp),
+                  SizedBox(width: 1.5.w),
+                  Text(
+                    _formatTimestampTo12Hour(msg.seenAt),
+                    style: context.regular14,
+                  ),
+                ],
+              ),
       ],
     );
+  }
+
+  String _formatTimestampTo12Hour(String? seenAt) {
+    int timestamp = int.parse(seenAt ?? "");
+    // ! Convert timestamp (milliseconds) to DateTime
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    // ! Format the DateTime to hh:mm a (12-hour format with AM/PM)
+    String formattedTime = DateFormat('hh:mm a').format(date);
+    return formattedTime;
   }
 }

@@ -14,6 +14,7 @@ part 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   late UserModel _user;
   final ApiService _apiService;
+  List<HomeUserModel> users = [];
   HomeCubit(this._apiService, AuthCubit cubit) : super(HomeInitial()) {
     _user = cubit.user!;
   }
@@ -29,7 +30,8 @@ class HomeCubit extends Cubit<HomeState> {
       HomeModel homeModel = HomeModel.fromJson(result);
       // debugPrint("${homeModel.data?.users?.length}");
       if (homeModel.data?.users != null) {
-        emit(HomeSuccess(homeModel.data!.users!));
+        users = homeModel.data!.users!;
+        emit(HomeSuccess(users));
       }
     } on DioException catch (dioexp) {
       emit(HomeFailure(DioFailure(dioexp).error));

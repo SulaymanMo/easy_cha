@@ -21,7 +21,7 @@ class SendMsgModel {
 
   Map<String, dynamic> toJson() {
     return {
-      "messageID": msgid,
+      // "messageID": msgid,
       "text": msg,
       "sender": sender,
       "receiver": receiver,

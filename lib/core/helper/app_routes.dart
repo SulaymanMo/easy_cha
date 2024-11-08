@@ -30,7 +30,10 @@ Route<dynamic> appRoutes(RouteSettings settings) {
                 )..isReceiverTyping(),
               ),
               BlocProvider<MsgCubit>(
-                create: (context) => MsgCubit(context.read<SocketCubit>()),
+                create: (context) => MsgCubit(
+                  context.read<SocketCubit>(),
+                  context.read<HomeCubit>(),
+                ),
               ),
             ],
             child: const HomeView(),
