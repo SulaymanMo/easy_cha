@@ -5,7 +5,7 @@ sealed class TypingMsgState {}
 final class TypingInitial extends TypingMsgState {}
 
 final class ReceiverTypingMsg extends TypingMsgState {
-  final String senderId;
+  final int sender;
   final bool isSenderTyping;
-  ReceiverTypingMsg(this.isSenderTyping, this.senderId);
+  ReceiverTypingMsg(this.isSenderTyping, this.sender);
 }

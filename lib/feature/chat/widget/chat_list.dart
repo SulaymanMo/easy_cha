@@ -21,7 +21,7 @@ class _ChatListState extends State<ChatList> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_controller.hasClients) {
         _controller.animateTo(
-          _controller.position.maxScrollExtent,
+          _controller.position.maxScrollExtent + 20,
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOut,
         );

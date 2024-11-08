@@ -4,7 +4,7 @@ class HomeUserModel {
   final String name;
   final String image;
   final String? isOnline;
-  final String? text;
+  String? text;
   final int? receiver;
   int? unreadCount;
 

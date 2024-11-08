@@ -49,15 +49,15 @@ class ChatMsgModel {
 
   factory ChatMsgModel.file(
     Map<String, dynamic> json, {
-    required String? fileName,
+    required dynamic fileName,
   }) {
     return ChatMsgModel(
       type: json["type"] as String?,
       id: json["messageID"] as int?,
       text: "${ConstString.path}${json["type"]}/$fileName",
       seenAt: "${DateTime.now()}",
-      sender: json["sender"],
-      receiver: json["receiver"],
+      sender: json["sender"] as int?,
+      receiver: json["receiver"] as int?,
     );
   }
 

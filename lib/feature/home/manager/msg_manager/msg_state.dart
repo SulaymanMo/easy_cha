@@ -18,3 +18,5 @@ final class FilesPickedState extends MsgState {
   final List<File> files;
   FilesPickedState(this.files);
 }
+
+final class SeenMsgState extends MsgState {}

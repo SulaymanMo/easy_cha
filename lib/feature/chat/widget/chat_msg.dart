@@ -1,10 +1,14 @@
 import 'package:easy_cha/core/common/custom_image.dart';
+import 'package:easy_cha/core/helper/service_locator.dart';
+import 'package:easy_cha/core/service/api_service.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_cha/core/constant/extension.dart';
 import 'package:easy_cha/core/constant/const_color.dart';
 
 import '../../../core/constant/const_string.dart';
+import '../../../core/helper/file_downloader.dart';
 import '../model/chat_msg_model.dart';
 
 class ChatMsg extends StatelessWidget {
@@ -38,10 +42,29 @@ class ChatMsg extends StatelessWidget {
           child: msg.type == ConstString.imageType
               ? CustomImage(image: msg.text)
               : msg.type == ConstString.fileType
-                  ? Container(
-                      width: 50.w,
-                      height: 10.h,
-                      color: Colors.red,
+                  ? Padding(
+                      padding: EdgeInsets.all(1.h),
+                      child: InkWell(
+                        onTap: () async {
+                          final FileDownloader downloader =
+                              FileDownloader(getIt.get<ApiService>());
+                          await downloader.downloadFile(msg.text!, "file_name");
+                        },
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Icon(Iconsax.document, size: 38.sp),
+                            SizedBox(height: 1.5.h),
+                            Flexible(
+                              child: Text(
+                                "File Name",
+                                style: context.medium14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     )
                   : Text(
                       msg.text ?? "",

@@ -36,4 +36,16 @@ final class ApiService {
     );
     return response.data as Map<String, dynamic>;
   }
+
+  Future<void> download(String url, String savePath) async {
+    await _dio.download(
+      url,
+      savePath,
+      onReceiveProgress: (received, total) {
+        if (total != -1) {
+          // print("Downloading: ${(received / total * 100).toStringAsFixed(0)}%");
+        }
+      },
+    );
+  }
 }

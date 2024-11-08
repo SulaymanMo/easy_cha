@@ -28,9 +28,12 @@ class _ChatViewState extends State<ChatView> {
     final msgState = context.read<MsgCubit>().state;
     context.read<SocketCubit>().userConnection();
     context.read<ChatCubit>().getMsgs(widget.user.id);
-    if (msgState is NewMsgState && msgState.model.sender == widget.user.id) {
-      context.read<MsgCubit>().seenMsg(receiver: widget.user.id, index: 2);
-      debugPrint("${widget.user.id} || ${msgState.model.sender}");
+    if (msgState is NewMsgState &&
+        int.parse(msgState.model.sender) == widget.user.id) {
+      context
+          .read<MsgCubit>()
+          .seenMsg(receiver: widget.user.id, index: widget.index);
+      // debugPrint("${widget.user.id} || ${msgState.model.sender}");
     }
   }
 

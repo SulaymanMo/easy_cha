@@ -14,16 +14,11 @@ import 'package:easy_cha/core/constant/extension.dart';
 import 'last_msg_text.dart';
 import 'msg_counter.dart';
 
-class UserCard extends StatefulWidget {
+class UserCard extends StatelessWidget {
   final int index;
   final HomeUserModel user;
   const UserCard({super.key, required this.user, required this.index});
 
-  @override
-  State<UserCard> createState() => _UserCardState();
-}
-
-class _UserCardState extends State<UserCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -31,14 +26,14 @@ class _UserCardState extends State<UserCard> {
         onTap: () => _navToUserChat(context),
         leading: CircleAvatar(
           radius: 7.w,
-          backgroundImage: CachedNetworkImageProvider(widget.user.image),
+          backgroundImage: CachedNetworkImageProvider(user.image),
         ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
               child: Text(
-                widget.user.name,
+                user.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: context.semi16,
@@ -52,10 +47,10 @@ class _UserCardState extends State<UserCard> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
-              child: LastMsgText(user: widget.user),
+              child: LastMsgText(user: user),
             ),
             SizedBox(width: 2.w),
-            MsgCounter(user: widget.user, index: widget.index),
+            MsgCounter(user: user, index: index),
           ],
         ),
       ),
@@ -81,11 +76,8 @@ class _UserCardState extends State<UserCard> {
                   context.read<AuthCubit>(),
                 ),
               ),
-              // BlocProvider<FileCubit>.value(
-              //   value: context.read<FileCubit>(),
-              // ),
             ],
-            child: ChatView(user: widget.user, index: widget.index),
+            child: ChatView(user: user, index: index),
           );
         },
       ),

@@ -16,13 +16,13 @@ class TypingMsgCubit extends Cubit<TypingMsgState> {
     _cubit.socket.on(
       SocketEvent.startTyping.event,
       (data) {
-        emit(ReceiverTypingMsg(true, data["sender"]));
+        emit(ReceiverTypingMsg(true, int.parse(data["sender"])));
       },
     );
     _cubit.socket.on(
       SocketEvent.stopTyping.event,
       (data) {
-        emit(ReceiverTypingMsg(false, data["sender"]));
+        emit(ReceiverTypingMsg(false, int.parse(data["sender"])));
       },
     );
   }

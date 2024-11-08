@@ -26,8 +26,9 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     context.read<HomeCubit>().getUsers();
-    context.read<MsgCubit>().receiveMsg();
-    context.read<MsgCubit>().receiveFile();
+    context.read<MsgCubit>()
+      ..receiveMsg()
+      ..receiveFile();
   }
 
   @override

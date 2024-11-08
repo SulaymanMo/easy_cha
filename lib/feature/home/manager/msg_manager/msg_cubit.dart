@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:easy_cha/feature/chat/model/chat_msg_model.dart';
-import 'package:easy_cha/feature/home/manager/home_manager/home_cubit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,9 +14,8 @@ part 'msg_state.dart';
 
 class MsgCubit extends Cubit<MsgState> {
   int limit = 5;
-  final HomeCubit _homeCubit;
-  final SocketCubit _socketCubit;
-  MsgCubit(this._socketCubit, this._homeCubit) : super(MsgInitial());
+  final SocketCubit _socket;
+  MsgCubit(this._socket) : super(MsgInitial());
 
   Future<void> pickFiles(FileType fileType) async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -39,12 +37,12 @@ class MsgCubit extends Cubit<MsgState> {
   Future<void> sendFiles(SendFileModel fileModel) async {
     try {
       // ! Emit the file via socket with the Base64 string including MIME type
-      _socketCubit.socket.emit(
+      _socket.socket.emit(
         SocketEvent.file.event,
         jsonEncode(
           SendFileModel(
             type: fileModel.type,
-            sender: _socketCubit.user.id,
+            sender: _socket.user.id,
             receiver: fileModel.receiver,
             files: await _toBase64(fileModel),
           ).toJosn(),
@@ -60,15 +58,15 @@ class MsgCubit extends Cubit<MsgState> {
   void _isFileUploaded() async {
     try {
       // Remove any existing listener to avoid duplication
-      _socketCubit.socket.off(SocketEvent.filesUploaded.event);
+      _socket.socket.off(SocketEvent.filesUploaded.event);
 
-      _socketCubit.socket.on(
+      _socket.socket.on(
         SocketEvent.filesUploaded.event,
         (data) {
           // RESPONSE HERE ARE MAP.
           final Map<String, dynamic> response = data;
           final List files = response["files"];
-          for (String? file in files) {
+          for (var file in files) {
             emit(NewMsgState(ChatMsgModel.file(response, fileName: file)));
           }
         },
@@ -102,7 +100,7 @@ class MsgCubit extends Cubit<MsgState> {
 
   void receiveFile() {
     try {
-      _socketCubit.socket.on(
+      _socket.socket.on(
         SocketEvent.file.event,
         (data) {
           // RESPONSE HERE ARE JSON NOT MAP LIKE OTHER EVENTS.
@@ -113,6 +111,7 @@ class MsgCubit extends Cubit<MsgState> {
               ChatMsgModel(
                 type: response["type"],
                 id: response["messageID"],
+                file: file,
                 text: "${ConstString.path}${response["type"]}/$file",
                 seenAt: "${DateTime.now()}",
                 sender: response["sender"],
@@ -140,7 +139,7 @@ class MsgCubit extends Cubit<MsgState> {
 
   // ! Receive msg from users (used in home & chat view)
   void receiveMsg() {
-    _socketCubit.socket.on(SocketEvent.msg.event, (data) {
+    _socket.socket.on(SocketEvent.msg.event, (data) {
       // SENDER AND RECEIVER HERE ARE STRING
       emit(NewMsgState(ChatMsgModel.newMsg(data)));
     });
@@ -148,11 +147,11 @@ class MsgCubit extends Cubit<MsgState> {
 
   // ! Send msg to user (used in chat)
   void sendMsg(int receiver, String msg) {
-    _socketCubit.socket.emit(
+    _socket.socket.emit(
       SocketEvent.msg.event,
       jsonEncode(
         SendMsgModel(
-          sender: _socketCubit.user.id,
+          sender: _socket.user.id,
           receiver: receiver,
           msg: msg,
         ).toJson(),
@@ -163,7 +162,7 @@ class MsgCubit extends Cubit<MsgState> {
         ChatMsgModel(
           text: msg,
           // id: homeMsg.msgid,
-          sender: _socketCubit.user.id,
+          sender: _socket.user.id,
           receiver: receiver,
           type: ConstString.textType,
           seenAt: "${DateTime.now()}",
@@ -174,14 +173,11 @@ class MsgCubit extends Cubit<MsgState> {
 
   // ! Seen Sender msg (used in ChatView, receiver is me & sender is other)
   void seenMsg({required int receiver, required int index}) {
-    _socketCubit.socket.emit(
+    _socket.socket.emit(
       SocketEvent.seenMsg.event,
-      jsonEncode({"sender": _socketCubit.user.id, "receiver": receiver}),
+      jsonEncode({"sender": _socket.user.id, "receiver": receiver}),
     );
-    // print(
-    // "userid: ${_homeCubit.counters[index].keys.first} || user counter: ${_homeCubit.counters[index][_socketCubit.user.id]}");
-    _homeCubit.counters[index][_socketCubit.user.id] = 0;
-    // print("user counter: ${_homeCubit.counters[index][_socketCubit.user.id]}");
-    // emit(MsgInitial());
+    emit(SeenMsgState());
+    // print("${_socket.user.id} seen $receiver at index $index==============");
   }
 }
