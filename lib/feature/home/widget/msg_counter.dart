@@ -15,7 +15,7 @@ class MsgCounter extends StatelessWidget {
     return BlocConsumer<MsgCubit, MsgState>(
       listener: (_, state) {
         if (state is NewMsgState) {
-          if (int.parse(state.model.sender) == user.id) {
+          if (int.parse(state.model.sender.toString()) == user.id) {
             user.unreadCount = user.unreadCount! + 1;
           } 
             // print("======================");

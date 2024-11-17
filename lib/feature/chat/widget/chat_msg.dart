@@ -48,7 +48,7 @@ class ChatMsg extends StatelessWidget {
                         onTap: () async {
                           await getIt
                               .get<FileDownloader>()
-                              .downloadFile(msg.text!, "file_name");
+                              .downloadFile(msg.text!, "files");
                         },
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -107,8 +107,10 @@ class ChatMsg extends StatelessWidget {
   }
 
   String _formatTimestampTo12Hour(String? seenAt) {
-    int timestamp = int.parse(seenAt ?? "");
-    // ! Convert timestamp (milliseconds) to DateTime
+    if (seenAt == null || seenAt.isEmpty) return "";
+    // ! Parse the string as an integer (timestamp in milliseconds)
+    int timestamp = int.parse(seenAt);
+    // ! Convert the timestamp to a DateTime
     DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
     // ! Format the DateTime to hh:mm a (12-hour format with AM/PM)
     String formattedTime = DateFormat('hh:mm a').format(date);

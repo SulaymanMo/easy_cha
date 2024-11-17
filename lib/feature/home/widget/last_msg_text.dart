@@ -13,7 +13,8 @@ class LastMsgText extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<MsgCubit, MsgState>(
       listener: (_, state) {
-        if (state is NewMsgState && int.parse(state.model.sender) == user.id) {
+        if (state is NewMsgState &&
+            int.parse(state.model.sender.toString()) == user.id) {
           user.text = state.model.text;
         }
       },

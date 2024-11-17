@@ -83,7 +83,7 @@ class _HomeViewState extends State<HomeView> {
                   if (state is NewMsgState) {
                     context
                         .read<MsgCubit>()
-                        .reOrderUsers(int.parse(state.model.sender));
+                        .reOrderUsers(int.parse(state.model.sender.toString()));
                   }
                 },
                 builder: (_, msgState) {

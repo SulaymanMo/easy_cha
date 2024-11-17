@@ -6,6 +6,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:flutter/material.dart';
 import '../../../core/common/input.dart';
 import '../../../core/constant/const_color.dart';
+import '../../../core/constant/const_string.dart';
 import '../../home/manager/msg_manager/msg_cubit.dart';
 import '../../home/manager/typing_msg_manager/typing_cubit.dart';
 import '../../home/model/home_model/home_user_model.dart';
@@ -98,7 +99,10 @@ class _ChatInputState extends State<ChatInput> {
   void _bottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      builder: (_) => const MediaBottomSheet(),
+      builder: (_) => BlocProvider<MsgCubit>.value(
+        value: context.read<MsgCubit>(),
+        child: const MediaBottomSheet(),
+      ),
     );
   }
 
@@ -106,7 +110,7 @@ class _ChatInputState extends State<ChatInput> {
     if (state is FilesPickedState) {
       context.read<MsgCubit>().sendFiles(
             SendFileModel(
-              type: "files",
+              type: ConstString.imageType,
               sender: 0,
               receiver: widget.user.id,
               files: state.files.map((e) => e.path).toList(),

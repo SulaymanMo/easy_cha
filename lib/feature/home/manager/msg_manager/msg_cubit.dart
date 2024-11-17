@@ -24,7 +24,6 @@ class MsgCubit extends Cubit<MsgState> {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: fileType,
       allowMultiple: true,
-      compressionQuality: 1, // todo: remove this property.
     );
 
     if (result == null) {

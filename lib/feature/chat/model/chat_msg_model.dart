@@ -43,7 +43,7 @@ class ChatMsgModel {
       type: ConstString.textType,
       sender: json['sender'] as String?,
       receiver: json['receiver'] as String?,
-      seenAt: "${DateTime.now()}",
+      seenAt: "${DateTime.now().millisecondsSinceEpoch}",
     );
   }
 
@@ -55,7 +55,7 @@ class ChatMsgModel {
       type: json["type"] as String?,
       id: json["messageID"] as int?,
       text: "${ConstString.path}${json["type"]}/$fileName",
-      seenAt: "${DateTime.now()}",
+      seenAt: "${DateTime.now().millisecondsSinceEpoch}",
       sender: json["sender"] as int?,
       receiver: json["receiver"] as int?,
     );
